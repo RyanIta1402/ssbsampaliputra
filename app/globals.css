@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pitch: #16f04a;
+  --gold: #f5c542;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #0a0e0d;
+  color: #f4f1ea;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Scrollbar bergaya */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0e0d;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f2a26;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pitch);
+}
+
+::selection {
+  background: var(--pitch);
+  color: #0a0e0d;
+}
+
+@layer components {
+  /* Garis judul kondensed ala scoreboard */
+  .display-stroke {
+    -webkit-text-stroke: 1.5px rgba(244, 241, 234, 0.9);
+    color: transparent;
+  }
+
+  .tag-label {
+    @apply inline-flex items-center gap-2 text-xs font-body font-bold uppercase tracking-[0.25em] text-pitch;
+  }
+
+  .tag-label::before {
+    content: "";
+    @apply inline-block h-2 w-2 rotate-45 bg-pitch;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-pitch px-7 py-4 font-body text-sm font-bold uppercase tracking-widest text-ink transition-all duration-300 hover:bg-gold hover:shadow-[0_0_30px_-5px_var(--gold)];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 border border-bone/30 px-7 py-4 font-body text-sm font-bold uppercase tracking-widest text-bone transition-all duration-300 hover:border-pitch hover:text-pitch;
+  }
+
+  .card-edge {
+    @apply relative overflow-hidden border border-bone/10 bg-coal transition-all duration-500 hover:border-pitch/40;
+  }
+}
+
+/* Sudut diagonal untuk seksi */
+.clip-slant {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 4vw));
+}
+
+/* Reveal saat scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

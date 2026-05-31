@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"J:\\\\Project\\\\ssb-sampali-putra\")",
+      "Bash(dir \"J:\\\\Project\\\\ssb-sampali-putra\" /a:h)",
+      "PowerShell($f = 'J:\\\\Project\\\\ssb-sampali-putra\\\\public\\\\gallery\\\\foto-2.jpg'; $bytes = [System.IO.File]::ReadAllBytes\\($f\\) | Select-Object -First 12; $bytes | ForEach-Object { \"{0:X2}\" -f $_ }; \"---\"; \"Size: $\\(\\(Get-Item $f\\).Length\\)\"; try { Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\($f\\); \"Width: $\\($img.Width\\), Height: $\\($img.Height\\), Format: $\\($img.RawFormat.Guid\\)\"; $img.Dispose\\(\\) } catch { \"ERROR: $_\" })",
+      "PowerShell(\"--- Source folder ---\")",
+      "PowerShell(\"--- Gallery folder ---\")"
+    ]
+  }
+}
