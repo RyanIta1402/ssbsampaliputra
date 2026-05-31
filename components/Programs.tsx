@@ -97,20 +97,20 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                         {p.hariLatihan}
                       </span>
                     </div>
-                    <div className="flex items-start justify-between gap-2 text-sm">
-                      <span className="min-w-0 flex-1 text-bone/50">
+                    <div className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                      <span className="text-bone/50">
                         Iuran Orang Tua Siswa / bulan
                       </span>
-                      <span className="inline-block shrink-0 origin-right whitespace-nowrap font-display text-base text-pitch transition-transform duration-300 group-hover:scale-110 sm:text-xl">
+                      <span className="self-end whitespace-nowrap font-display text-lg text-pitch transition-transform duration-300 group-hover:scale-110 sm:self-auto sm:text-xl">
                         {p.biaya}
                       </span>
                     </div>
                     {p.uangKas && (
-                      <div className="flex items-start justify-between gap-2 text-sm">
-                        <span className="min-w-0 flex-1 text-bone/50">
+                      <div className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                        <span className="text-bone/50">
                           Uang Kas Siswa / bulan
                         </span>
-                        <span className="inline-block shrink-0 origin-right whitespace-nowrap font-display text-base text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 sm:text-xl">
+                        <span className="self-end whitespace-nowrap font-display text-lg text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 sm:self-auto sm:text-xl">
                           {p.uangKas}
                         </span>
                       </div>
