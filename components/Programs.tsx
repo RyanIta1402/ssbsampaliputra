@@ -97,20 +97,20 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                         {p.hariLatihan}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-start justify-between gap-3 text-sm">
                       <span className="text-bone/50">
                         Iuran Orang Tua Siswa / bulan
                       </span>
-                      <span className="inline-block origin-right font-display text-xl text-pitch transition-transform duration-300 group-hover:scale-110">
+                      <span className="inline-block shrink-0 whitespace-nowrap origin-right font-display text-lg text-pitch transition-transform duration-300 group-hover:scale-110 sm:text-xl">
                         {p.biaya}
                       </span>
                     </div>
                     {p.uangKas && (
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-start justify-between gap-3 text-sm">
                         <span className="text-bone/50">
                           Uang Kas Siswa / bulan
                         </span>
-                        <span className="inline-block origin-right font-display text-xl text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110">
+                        <span className="inline-block shrink-0 whitespace-nowrap origin-right font-display text-lg text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 sm:text-xl">
                           {p.uangKas}
                         </span>
                       </div>
