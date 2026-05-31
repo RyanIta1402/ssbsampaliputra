@@ -75,7 +75,7 @@ export default function Programs({ programs }: { programs?: Program[] }) {
           {list.map((p, i) => (
             <Reveal key={p._id || i} delay={i * 120}>
               <AnimatedCard padded={false}>
-                <div className="relative p-8">
+                <div className="relative p-5 sm:p-8">
                   <span className="pointer-events-none absolute right-0 top-0 h-20 w-20 translate-x-10 -translate-y-10 rotate-45 bg-pitch/10 transition-all duration-500 group-hover:translate-x-7 group-hover:-translate-y-7 group-hover:bg-pitch/25" />
 
                   <span className="inline-flex animate-float items-center gap-1.5 bg-gold/15 px-3 py-1 font-body text-xs font-bold uppercase tracking-widest text-gold ring-1 ring-gold/20">
@@ -97,20 +97,20 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                         {p.hariLatihan}
                       </span>
                     </div>
-                    <div className="flex items-start justify-between gap-3 text-sm">
-                      <span className="text-bone/50">
+                    <div className="flex items-start justify-between gap-2 text-sm">
+                      <span className="min-w-0 flex-1 text-bone/50">
                         Iuran Orang Tua Siswa / bulan
                       </span>
-                      <span className="inline-block shrink-0 whitespace-nowrap origin-right font-display text-lg text-pitch transition-transform duration-300 group-hover:scale-110 sm:text-xl">
+                      <span className="inline-block shrink-0 origin-right whitespace-nowrap font-display text-base text-pitch transition-transform duration-300 group-hover:scale-110 sm:text-xl">
                         {p.biaya}
                       </span>
                     </div>
                     {p.uangKas && (
-                      <div className="flex items-start justify-between gap-3 text-sm">
-                        <span className="text-bone/50">
+                      <div className="flex items-start justify-between gap-2 text-sm">
+                        <span className="min-w-0 flex-1 text-bone/50">
                           Uang Kas Siswa / bulan
                         </span>
-                        <span className="inline-block shrink-0 whitespace-nowrap origin-right font-display text-lg text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 sm:text-xl">
+                        <span className="inline-block shrink-0 origin-right whitespace-nowrap font-display text-base text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 sm:text-xl">
                           {p.uangKas}
                         </span>
                       </div>
