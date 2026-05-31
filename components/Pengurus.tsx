@@ -6,21 +6,21 @@ type Pengurus = {
 };
 
 const susunan: Pengurus[] = [
-  { jabatan: "Penasehat", nama: ["Hendrianto", "Ardy Syahputra"] },
+  { jabatan: "Penasehat", nama: ["Hendrianto", "Ardy Syahputra", "Legimin"] },
   { jabatan: "Pembina", nama: ["Hari Syahputra", "Irwansyah"] },
   { jabatan: "Ketua", nama: ["Riyanto"] },
   { jabatan: "Wakil Ketua", nama: ["Khairul"] },
   { jabatan: "Sekretaris", nama: ["Dani"] },
-  { jabatan: "Bendahara", nama: ["Panji"] },
+  { jabatan: "Bendahara", nama: ["Susilawati"] },
   { jabatan: "Pelatih", nama: ["Panji", "Iqbal", "Ghalib"] },
   { jabatan: "Admin", nama: ["Ita Novita", "Ella"] },
   {
     jabatan: "Humas",
-    nama: ["Susilawati", "Reniramadani", "Hafis", "Gunawan"],
+    nama: ["Frengki", "Reniramadani", "Hafis", "Gunawan"],
   },
   {
     jabatan: "Perlengkapan",
-    nama: ["Wulan", "Bapak Dirga", "Bapak Fiji", "Mamak Sastra", "Mamak Adam"],
+    nama: ["Wulan", "Bapak Andre", "Bapak Fiji", "Mamak Sastra", "Mamak Adam"],
   },
 ];
 

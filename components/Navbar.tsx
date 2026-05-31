@@ -45,19 +45,19 @@ export default function Navbar({ namaKlub }: { namaKlub: string }) {
           </span>
         </a>
 
-        <ul className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center gap-4 md:flex lg:gap-6">
           {links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
-                className="font-body text-sm font-semibold uppercase tracking-widest text-bone/70 transition-colors hover:text-pitch"
+                className="font-body text-xs font-semibold uppercase tracking-wider text-bone/70 transition-colors hover:text-pitch lg:text-sm lg:tracking-widest"
               >
                 {l.label}
               </a>
             </li>
           ))}
-          <li>
-            <a href="#kontak" className="btn-primary !px-5 !py-2.5">
+          <li className="ml-2">
+            <a href="#kontak" className="btn-primary !px-4 !py-2 lg:!px-5 lg:!py-2.5">
               Daftar
             </a>
           </li>

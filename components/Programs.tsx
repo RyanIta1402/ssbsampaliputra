@@ -7,6 +7,7 @@ type Program = {
   deskripsi?: string;
   hariLatihan?: string;
   biaya?: string;
+  uangKas?: string;
   fitur?: string[];
 };
 
@@ -17,8 +18,9 @@ const defaultPrograms: Program[] = [
     kelompokUsia: "U-6 s/d U-8",
     deskripsi:
       "Pengenalan dasar sepak bola lewat permainan menyenangkan dan koordinasi gerak.",
-    hariLatihan: "Selasa, Kamis, Jumat",
-    biaya: "Rp 25.000",
+    hariLatihan: "Selasa, Rabu, Jumat",
+    biaya: "Rp 20.000",
+    uangKas: "Rp 5.000",
     fitur: ["Teknik dasar", "Permainan kelompok", "Jersey latihan"],
   },
   {
@@ -27,8 +29,9 @@ const defaultPrograms: Program[] = [
     kelompokUsia: "U-9 s/d U-12",
     deskripsi:
       "Penguasaan teknik kontrol, passing, dribbling, dan pemahaman posisi.",
-    hariLatihan: "Selasa, Kamis, Jumat",
-    biaya: "Rp 25.000",
+    hariLatihan: "Selasa, Rabu, Jumat",
+    biaya: "Rp 20.000",
+    uangKas: "Rp 5.000",
     fitur: ["Latihan taktik", "Uji tanding", "Evaluasi berkala"],
   },
   {
@@ -37,8 +40,9 @@ const defaultPrograms: Program[] = [
     kelompokUsia: "U-13 s/d U-15",
     deskripsi:
       "Persiapan kompetisi dengan latihan intensif, strategi tim, dan fisik.",
-    hariLatihan: "Selasa, Kamis, Jumat",
-    biaya: "Rp 25.000",
+    hariLatihan: "Selasa, Rabu, Jumat",
+    biaya: "Rp 20.000",
+    uangKas: "Rp 5.000",
     fitur: ["Program fisik", "Turnamen rutin", "Pemantauan scout"],
   },
 ];
@@ -86,11 +90,23 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-bone/50">Biaya / bulan</span>
+                    <span className="text-bone/50">
+                      Iuran Orang Tua Siswa / bulan
+                    </span>
                     <span className="font-display text-xl text-pitch">
                       {p.biaya}
                     </span>
                   </div>
+                  {p.uangKas && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-bone/50">
+                        Uang Kas Siswa / minggu
+                      </span>
+                      <span className="font-display text-xl text-gold">
+                        {p.uangKas}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {p.fitur && p.fitur.length > 0 && (

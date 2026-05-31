@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import Reveal from "./Reveal";
 import SanityImage from "./SanityImage";
 
@@ -50,15 +52,26 @@ export default function About({ data }: { data?: AboutData }) {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Gambar */}
           <Reveal className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden">
-              <SanityImage
-                image={data?.gambar}
-                alt="Tim SSB Sampali Putra"
-                width={800}
-                height={1000}
-                className="h-full w-full object-cover"
-                fallbackLabel="Foto Tim"
-              />
+            <div className="relative aspect-[4/3] overflow-hidden">
+              {data?.gambar ? (
+                <SanityImage
+                  image={data.gambar}
+                  alt="Tim SSB Sampali Putra"
+                  width={1200}
+                  height={900}
+                  className="h-full w-full object-contain"
+                  fallbackLabel="Foto Tim"
+                />
+              ) : (
+                <Image
+                  src="/foto-tim.jpg"
+                  alt="Tim SSB Sampali Putra"
+                  width={1980}
+                  height={1500}
+                  className="h-full w-full object-contain"
+                  priority
+                />
+              )}
             </div>
             {/* Badge tahun */}
             <div className="absolute -bottom-6 -right-4 bg-pitch px-7 py-5 lg:right-8">

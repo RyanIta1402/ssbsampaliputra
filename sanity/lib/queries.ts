@@ -43,6 +43,7 @@ export const programsQuery = groq`*[_type == "program"] | order(urutan asc){
   deskripsi,
   hariLatihan,
   biaya,
+  uangKas,
   gambar,
   fitur
 }`;

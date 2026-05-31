@@ -180,7 +180,8 @@ export default function Contact({ settings }: { settings?: Settings }) {
             {/* Unduh formulir kosong */}
             <a
               href="/formulir-pendaftaran.pdf"
-              download
+              target="_blank"
+              rel="noreferrer"
               className="btn-ghost mt-7 inline-flex"
             >
               ⬇ Unduh Formulir Pendaftaran (PDF)
@@ -276,10 +277,11 @@ export default function Contact({ settings }: { settings?: Settings }) {
               </h3>
               <a
                 href="/formulir-pendaftaran.pdf"
-                download
+                target="_blank"
+                rel="noreferrer"
                 className="font-body text-xs font-bold uppercase tracking-widest text-pitch transition-colors hover:text-gold"
               >
-                ⬇ Unduh PDF
+                ⬇ Buka PDF
               </a>
             </div>
             <p className="mt-2 text-sm text-bone/50">

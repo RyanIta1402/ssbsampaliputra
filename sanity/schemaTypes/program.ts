@@ -31,9 +31,15 @@ export const program = defineType({
     }),
     defineField({
       name: "biaya",
-      title: "Biaya / Bulan",
+      title: "Uang Kas Orang Tua / Bulan",
       type: "string",
-      description: "Contoh: Rp 150.000",
+      description: "Contoh: Rp 20.000",
+    }),
+    defineField({
+      name: "uangKas",
+      title: "Uang Kas Siswa / Minggu",
+      type: "string",
+      description: "Contoh: Rp 5.000",
     }),
     defineField({
       name: "fitur",
