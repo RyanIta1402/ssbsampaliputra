@@ -13,7 +13,7 @@ const susunan: Pengurus[] = [
   { jabatan: "Sekretaris", nama: ["Dani"] },
   { jabatan: "Bendahara", nama: ["Panji"] },
   { jabatan: "Pelatih", nama: ["Panji", "Iqbal", "Ghalib"] },
-  { jabatan: "Admin", nama: ["Iya Novita", "Ella"] },
+  { jabatan: "Admin", nama: ["Ita Novita", "Ella"] },
   {
     jabatan: "Humas",
     nama: ["Susilawati", "Reniramadani", "Hafis", "Gunawan"],
