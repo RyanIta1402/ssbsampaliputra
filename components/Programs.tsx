@@ -90,29 +90,31 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                     {p.deskripsi}
                   </p>
 
-                  <div className="mt-6 space-y-2 border-t border-bone/10 pt-6">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-bone/50">Jadwal</span>
-                      <span className="font-semibold text-bone">
+                  <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 border-t border-bone/10 pt-6">
+                    <div>
+                      <div className="font-body text-[10px] font-bold uppercase tracking-widest text-bone/40">
+                        Jadwal
+                      </div>
+                      <div className="mt-1 font-semibold leading-tight text-bone">
                         {p.hariLatihan}
-                      </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-                      <span className="text-bone/50">
-                        Iuran Orang Tua Siswa / bulan
-                      </span>
-                      <span className="self-end whitespace-nowrap font-display text-lg text-pitch transition-transform duration-300 group-hover:scale-110 sm:self-auto sm:text-xl">
+                    <div className="text-right">
+                      <div className="font-body text-[10px] font-bold uppercase tracking-widest text-bone/40">
+                        Iuran / bulan
+                      </div>
+                      <div className="mt-1 whitespace-nowrap font-display text-xl text-pitch transition-transform duration-300 group-hover:scale-110 inline-block origin-right">
                         {p.biaya}
-                      </span>
+                      </div>
                     </div>
                     {p.uangKas && (
-                      <div className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-                        <span className="text-bone/50">
+                      <div className="col-span-2 text-right">
+                        <div className="font-body text-[10px] font-bold uppercase tracking-widest text-bone/40">
                           Uang Kas Siswa / bulan
-                        </span>
-                        <span className="self-end whitespace-nowrap font-display text-lg text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 sm:self-auto sm:text-xl">
+                        </div>
+                        <div className="mt-1 whitespace-nowrap font-display text-xl text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 inline-block origin-right">
                           {p.uangKas}
-                        </span>
+                        </div>
                       </div>
                     )}
                   </div>

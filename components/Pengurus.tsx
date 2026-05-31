@@ -21,7 +21,7 @@ const susunan: Pengurus[] = [
   },
   {
     jabatan: "Perlengkapan",
-    nama: ["Wulan", "Bapak Andre", "Bapak Fiji", "Mamak Sastra", "Mamak Adam"],
+    nama: ["Bapak Andre", "Bapak Fiji", "Mamak Sastra", "Mamak Adam", "Wulan"],
   },
 ];
 
