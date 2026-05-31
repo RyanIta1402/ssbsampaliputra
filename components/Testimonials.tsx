@@ -1,3 +1,4 @@
+import AnimatedCard from "./AnimatedCard";
 import Reveal from "./Reveal";
 import SanityImage from "./SanityImage";
 
@@ -56,34 +57,36 @@ export default function Testimonials({
         <div className="grid gap-6 lg:grid-cols-3">
           {list.map((t, i) => (
             <Reveal key={t._id || i} delay={i * 100}>
-              <figure className="card-edge flex h-full flex-col p-8">
-                <span className="font-display text-6xl leading-none text-pitch/30">
-                  &ldquo;
-                </span>
-                <blockquote className="-mt-4 flex-1 text-base leading-relaxed text-bone/80">
-                  {t.pesan}
-                </blockquote>
-                <figcaption className="mt-6 flex items-center gap-4 border-t border-bone/10 pt-6">
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-ink">
-                    <SanityImage
-                      image={t.foto}
-                      alt={t.nama || "Testimoni"}
-                      width={100}
-                      height={100}
-                      className="h-full w-full object-cover"
-                      fallbackLabel=""
-                    />
-                  </div>
-                  <div>
-                    <div className="font-display text-base uppercase tracking-wide text-bone">
-                      {t.nama}
+              <AnimatedCard padded={false}>
+                <figure className="flex h-full flex-col p-8">
+                  <span className="font-display text-6xl leading-none text-pitch/30 transition-all duration-500 group-hover:text-pitch/60 group-hover:scale-110 inline-block origin-left">
+                    &ldquo;
+                  </span>
+                  <blockquote className="-mt-4 flex-1 text-base leading-relaxed text-bone/80">
+                    {t.pesan}
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-4 border-t border-bone/10 pt-6">
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-ink ring-2 ring-transparent transition-all duration-300 group-hover:ring-pitch/60">
+                      <SanityImage
+                        image={t.foto}
+                        alt={t.nama || "Testimoni"}
+                        width={100}
+                        height={100}
+                        className="h-full w-full object-cover"
+                        fallbackLabel=""
+                      />
                     </div>
-                    <div className="font-body text-xs font-semibold uppercase tracking-widest text-gold">
-                      {t.peran}
+                    <div>
+                      <div className="font-display text-base uppercase tracking-wide text-bone transition-colors duration-300 group-hover:text-pitch">
+                        {t.nama}
+                      </div>
+                      <div className="font-body text-xs font-semibold uppercase tracking-widest text-gold">
+                        {t.peran}
+                      </div>
                     </div>
-                  </div>
-                </figcaption>
-              </figure>
+                  </figcaption>
+                </figure>
+              </AnimatedCard>
             </Reveal>
           ))}
         </div>

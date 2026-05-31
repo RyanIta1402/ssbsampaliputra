@@ -1,3 +1,4 @@
+import AnimatedCard from "./AnimatedCard";
 import Reveal from "./Reveal";
 
 type Achievement = {
@@ -16,9 +17,9 @@ const defaultAchievements: Achievement[] = [
   },
   {
     _id: "2",
-    judul: "Runner-up Piala Danone U-15",
-    tahun: "2023",
-    keterangan: "Lolos hingga babak final tingkat regional.",
+    judul: "Juara 2 Liga Utamasia U-12",
+    tahun: "2024",
+    keterangan: "Juara II Liga Utamasia U-12.",
   },
   {
     _id: "3",
@@ -55,24 +56,26 @@ export default function Achievements({
           </h2>
         </Reveal>
 
-        <div className="grid gap-px bg-bone/10 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {list.map((a, i) => (
             <Reveal key={a._id || i} delay={i * 80}>
-              <div className="group flex h-full items-start gap-5 bg-coal p-8 transition-colors hover:bg-ink">
-                <div className="shrink-0 font-display text-4xl text-pitch lg:text-5xl">
-                  {a.tahun}
+              <AnimatedCard>
+                <div className="flex h-full items-start gap-5 p-2">
+                  <div className="shrink-0 font-display text-4xl text-pitch transition-transform duration-500 group-hover:scale-110 group-hover:text-gold lg:text-5xl">
+                    {a.tahun}
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg uppercase leading-snug tracking-wide text-bone transition-colors duration-300 group-hover:text-pitch">
+                      {a.judul}
+                    </h3>
+                    {a.keterangan && (
+                      <p className="mt-2 text-sm leading-relaxed text-bone/60">
+                        {a.keterangan}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-display text-lg uppercase leading-snug tracking-wide text-bone">
-                    {a.judul}
-                  </h3>
-                  {a.keterangan && (
-                    <p className="mt-2 text-sm leading-relaxed text-bone/60">
-                      {a.keterangan}
-                    </p>
-                  )}
-                </div>
-              </div>
+              </AnimatedCard>
             </Reveal>
           ))}
         </div>

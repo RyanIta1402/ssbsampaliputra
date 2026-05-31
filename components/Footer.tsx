@@ -121,12 +121,6 @@ export default function Footer({ settings }: { settings?: Settings }) {
           <p className="text-xs text-bone/40">
             © {tahun} {nama}. Seluruh hak cipta dilindungi.
           </p>
-          <a
-            href="/studio"
-            className="text-xs text-bone/40 transition-colors hover:text-pitch"
-          >
-            Kelola Konten (CMS) →
-          </a>
         </div>
       </div>
     </footer>

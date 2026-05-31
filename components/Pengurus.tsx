@@ -1,3 +1,4 @@
+import AnimatedCard from "./AnimatedCard";
 import Reveal from "./Reveal";
 
 type Pengurus = {
@@ -42,24 +43,25 @@ export default function Pengurus() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {susunan.map((p, i) => (
             <Reveal key={p.jabatan} delay={i * 60}>
-              <div className="card-edge h-full p-6">
+              <AnimatedCard>
                 <div className="flex items-center gap-3">
-                  <span className="inline-block h-2 w-2 rounded-full bg-pitch" />
+                  <span className="inline-block h-2 w-2 rounded-full bg-pitch animate-glow" />
                   <h3 className="font-body text-xs font-bold uppercase tracking-widest text-gold">
                     {p.jabatan}
                   </h3>
                 </div>
                 <ul className="mt-4 space-y-1.5">
-                  {p.nama.map((n) => (
+                  {p.nama.map((n, ni) => (
                     <li
                       key={n}
-                      className="font-display text-lg uppercase tracking-wide text-bone"
+                      style={{ transitionDelay: `${ni * 40}ms` }}
+                      className="font-display text-lg uppercase tracking-wide text-bone transition-all duration-300 group-hover:translate-x-1 group-hover:text-pitch"
                     >
                       {n}
                     </li>
                   ))}
                 </ul>
-              </div>
+              </AnimatedCard>
             </Reveal>
           ))}
         </div>

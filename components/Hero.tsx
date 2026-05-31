@@ -13,7 +13,7 @@ type HeroData = {
 
 const defaultStats: Stat[] = [
   { angka: "30+", label: "Tahun Pengalaman" },
-  { angka: "40+", label: "Siswa Aktif" },
+  { angka: "50+", label: "Siswa Aktif" },
   { angka: "10+", label: "Trofi Juara" },
   { angka: "3+", label: "Pelatih Berpengalaman" },
 ];
@@ -54,11 +54,11 @@ export default function Hero({ data }: { data?: HeroData }) {
             Sekolah Sepak Bola • Sampali, Deli Serdang
           </p>
 
-          <h1 className="font-display text-6xl uppercase leading-[0.88] tracking-tight text-bone sm:text-7xl lg:text-8xl">
-            <span className="block animate-fade-up [animation-delay:120ms] opacity-0">
+          <h1 className="font-display text-5xl uppercase leading-[1.1] tracking-tight text-bone sm:text-7xl sm:leading-[0.95] lg:text-8xl lg:leading-[0.9]">
+            <span className="block animate-fade-up pb-1 [animation-delay:120ms] opacity-0">
               {baris1}
             </span>
-            <span className="block animate-fade-up text-pitch [animation-delay:240ms] opacity-0">
+            <span className="block animate-fade-up pb-1 text-pitch [animation-delay:240ms] opacity-0">
               {baris2}
             </span>
           </h1>

@@ -1,3 +1,4 @@
+import AnimatedCard from "./AnimatedCard";
 import Reveal from "./Reveal";
 import SanityImage from "./SanityImage";
 
@@ -50,14 +51,14 @@ export default function Coaches({ coaches }: { coaches?: Coach[] }) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((c, i) => (
             <Reveal key={c._id || i} delay={i * 100}>
-              <div className="card-edge group h-full">
+              <AnimatedCard padded={false}>
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <SanityImage
                     image={c.foto}
                     alt={c.nama || "Pelatih"}
                     width={600}
                     height={800}
-                    className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0"
+                    className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
                     fallbackLabel="Foto Pelatih"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
@@ -68,7 +69,7 @@ export default function Coaches({ coaches }: { coaches?: Coach[] }) {
                   )}
                 </div>
                 <div className="p-6">
-                  <h3 className="font-display text-xl uppercase tracking-wide text-bone">
+                  <h3 className="font-display text-xl uppercase tracking-wide text-bone transition-colors duration-300 group-hover:text-pitch">
                     {c.nama}
                   </h3>
                   <p className="mt-1 font-body text-sm font-semibold uppercase tracking-widest text-gold">
@@ -80,7 +81,7 @@ export default function Coaches({ coaches }: { coaches?: Coach[] }) {
                     </p>
                   )}
                 </div>
-              </div>
+              </AnimatedCard>
             </Reveal>
           ))}
         </div>
