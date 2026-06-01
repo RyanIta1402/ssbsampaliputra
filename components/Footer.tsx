@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import VisitorCounter from "./VisitorCounter";
+
 type Settings = {
   namaKlub?: string;
   tagline?: string;
@@ -121,6 +123,7 @@ export default function Footer({ settings }: { settings?: Settings }) {
           <p className="text-xs text-bone/40">
             © {tahun} {nama}. Seluruh hak cipta dilindungi.
           </p>
+          <VisitorCounter />
         </div>
       </div>
     </footer>
