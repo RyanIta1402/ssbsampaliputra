@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import AnimatedCard from "./AnimatedCard";
 import Reveal from "./Reveal";
 import SanityImage from "./SanityImage";
@@ -9,6 +11,7 @@ type Coach = {
   lisensi?: string;
   bio?: string;
   foto?: import("sanity").Image;
+  fotoLocal?: string;
 };
 
 const defaultCoaches: Coach[] = [
@@ -25,6 +28,7 @@ const defaultCoaches: Coach[] = [
     jabatan: "Pelatih Teknik",
     lisensi: "",
     bio: "Spesialis pengembangan teknik individu dan kontrol bola.",
+    fotoLocal: "/coaches/iqbal.jpeg",
   },
   {
     _id: "3",
@@ -32,6 +36,7 @@ const defaultCoaches: Coach[] = [
     jabatan: "Pelatih Fisik",
     lisensi: "",
     bio: "Menangani program kebugaran dan pencegahan cedera pemain.",
+    fotoLocal: "/coaches/ghalib.jpeg",
   },
 ];
 
@@ -53,14 +58,24 @@ export default function Coaches({ coaches }: { coaches?: Coach[] }) {
             <Reveal key={c._id || i} delay={i * 100}>
               <AnimatedCard padded={false}>
                 <div className="relative aspect-[3/4] overflow-hidden">
-                  <SanityImage
-                    image={c.foto}
-                    alt={c.nama || "Pelatih"}
-                    width={600}
-                    height={800}
-                    className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
-                    fallbackLabel="Foto Pelatih"
-                  />
+                  {c.fotoLocal ? (
+                    <Image
+                      src={c.fotoLocal}
+                      alt={c.nama || "Pelatih"}
+                      width={600}
+                      height={800}
+                      className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                    />
+                  ) : (
+                    <SanityImage
+                      image={c.foto}
+                      alt={c.nama || "Pelatih"}
+                      width={600}
+                      height={800}
+                      className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                      fallbackLabel="Foto Pelatih"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
                   {c.lisensi && (
                     <span className="absolute left-4 top-4 bg-pitch px-3 py-1 font-body text-xs font-bold uppercase tracking-wide text-ink">
