@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import Gallery from "@/components/Gallery";
 import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
+import Motto from "@/components/Motto";
 import Navbar from "@/components/Navbar";
 import Pengurus from "@/components/Pengurus";
 import Programs from "@/components/Programs";
@@ -62,6 +63,7 @@ export default async function Home() {
       <Hero data={hero} />
       <Marquee />
       <About data={about} />
+      <Motto />
       <Programs programs={programs as never} />
       <Coaches coaches={coaches as never} />
       <Pengurus />
