@@ -90,29 +90,29 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                     {p.deskripsi}
                   </p>
 
-                  <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 border-t border-bone/10 pt-6">
-                    <div>
-                      <div className="font-body text-[10px] font-bold uppercase tracking-widest text-bone/40">
+                  <div className="mt-6 flex flex-col gap-4 border-t border-bone/10 pt-6">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="font-body text-xs text-bone/60">
                         Jadwal
                       </div>
-                      <div className="mt-1 font-semibold leading-tight text-bone">
+                      <div className="font-semibold leading-tight text-bone text-right">
                         {p.hariLatihan}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-body text-[10px] font-bold uppercase tracking-widest text-bone/40">
-                        Iuran / bulan
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="font-body text-xs text-bone/60">
+                        Iuran Orang Tua Siswa / bulan
                       </div>
-                      <div className="mt-1 whitespace-nowrap font-display text-xl text-pitch transition-transform duration-300 group-hover:scale-110 inline-block origin-right">
+                      <div className="whitespace-nowrap font-display text-xl text-pitch transition-transform duration-300 group-hover:scale-110 origin-right">
                         {p.biaya}
                       </div>
                     </div>
                     {p.uangKas && (
-                      <div className="col-span-2 text-right">
-                        <div className="font-body text-[10px] font-bold uppercase tracking-widest text-bone/40">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="font-body text-xs text-bone/60">
                           Uang Kas Siswa / bulan
                         </div>
-                        <div className="mt-1 whitespace-nowrap font-display text-xl text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 inline-block origin-right">
+                        <div className="whitespace-nowrap font-display text-xl text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 origin-right">
                           {p.uangKas}
                         </div>
                       </div>

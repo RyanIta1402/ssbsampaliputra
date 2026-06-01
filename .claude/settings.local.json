@@ -5,7 +5,10 @@
       "Bash(dir \"J:\\\\Project\\\\ssb-sampali-putra\" /a:h)",
       "PowerShell($f = 'J:\\\\Project\\\\ssb-sampali-putra\\\\public\\\\gallery\\\\foto-2.jpg'; $bytes = [System.IO.File]::ReadAllBytes\\($f\\) | Select-Object -First 12; $bytes | ForEach-Object { \"{0:X2}\" -f $_ }; \"---\"; \"Size: $\\(\\(Get-Item $f\\).Length\\)\"; try { Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\($f\\); \"Width: $\\($img.Width\\), Height: $\\($img.Height\\), Format: $\\($img.RawFormat.Guid\\)\"; $img.Dispose\\(\\) } catch { \"ERROR: $_\" })",
       "PowerShell(\"--- Source folder ---\")",
-      "PowerShell(\"--- Gallery folder ---\")"
+      "PowerShell(\"--- Gallery folder ---\")",
+      "Bash(ls \"/j/Project/ssb-sampali-putra/public/gallery/\" | grep -i \"video\\\\|latihan\" 2>/dev/null; echo \"---SOURCE---\"; ls \"/j/SSb Sampali Putra/photo/\" | grep -i \"latihan\")",
+      "Bash(cp \"/j/SSb Sampali Putra/photo/latihan-1.mp4\" \"/j/Project/ssb-sampali-putra/public/gallery/latihan-1.mp4\")",
+      "Bash(cp \"/j/SSb Sampali Putra/photo/latihan-2.mp4\" \"/j/Project/ssb-sampali-putra/public/gallery/latihan-2.mp4\")"
     ]
   }
 }

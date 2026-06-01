@@ -46,6 +46,7 @@ const localGallery: LocalMedia[] = [
     kategori: "pertandingan",
     tipe: "gambar",
     src: "/gallery/foto-3.jpg",
+    fit: "contain",
   },
   {
     _id: "foto-4",
@@ -161,6 +162,7 @@ const localGallery: LocalMedia[] = [
     kategori: "latihan",
     tipe: "gambar",
     src: "/gallery/foto-16.jpg",
+    fit: "contain",
   },
   {
     _id: "foto-17",
@@ -168,6 +170,7 @@ const localGallery: LocalMedia[] = [
     kategori: "pertandingan",
     tipe: "gambar",
     src: "/gallery/foto-17.jpg",
+    fit: "contain",
   },
   {
     _id: "foto-18",
@@ -175,6 +178,7 @@ const localGallery: LocalMedia[] = [
     kategori: "pertandingan",
     tipe: "gambar",
     src: "/gallery/foto-18.jpg",
+    fit: "contain",
   },
   {
     _id: "foto-19",
@@ -254,6 +258,24 @@ const localGallery: LocalMedia[] = [
     tipe: "video",
     src: "/gallery/video-5.mp4",
     poster: "/gallery/foto-19.jpg",
+  },
+  {
+    _id: "latihan-1",
+    judul: "Sesi Latihan",
+    kategori: "latihan",
+    tipe: "video",
+    src: "/gallery/latihan-1.mp4",
+    poster: "/gallery/foto-10.jpg",
+    fit: "contain",
+  },
+  {
+    _id: "latihan-2",
+    judul: "Drill Latihan",
+    kategori: "latihan",
+    tipe: "video",
+    src: "/gallery/latihan-2.mp4",
+    poster: "/gallery/foto-12.jpg",
+    fit: "contain",
   },
 ];
 
@@ -459,7 +481,11 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
                       playsInline
                       autoPlay
                       preload="metadata"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className={
+                        m.fit === "contain"
+                          ? "h-full w-full object-contain"
+                          : "h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      }
                     />
                   ) : (
                     <Image
