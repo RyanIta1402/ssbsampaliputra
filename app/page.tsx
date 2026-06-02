@@ -2,6 +2,7 @@ import About from "@/components/About";
 import Achievements from "@/components/Achievements";
 import Coaches from "@/components/Coaches";
 import Contact from "@/components/Contact";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import Footer from "@/components/Footer";
 import Gallery from "@/components/Gallery";
 import Hero from "@/components/Hero";
@@ -72,6 +73,9 @@ export default async function Home() {
       <Testimonials testimonials={testimonials as never} />
       <Contact settings={settings} />
       <Footer settings={settings} />
+      <FloatingWhatsApp
+        whatsapp={(settings as { whatsapp?: string })?.whatsapp}
+      />
     </main>
   );
 }

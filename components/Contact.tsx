@@ -39,7 +39,7 @@ const defaultJadwal: Jadwal[] = [
   },
   {
     hari: "Jumat",
-    jam: "16:00 - 18:00",
+    jam: "15:00 - 18:00",
     lapangan: "Lapangan Garuda Deli Sampali",
     biaya: "Rp 5.000",
     mapsUrl: MAPS_GARUDA_DELI,
