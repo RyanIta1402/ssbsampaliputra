@@ -59,13 +59,10 @@ export default function VisitorCounter() {
   if (count === null || count <= 0) return null;
 
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs text-bone/50">
+    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold">
       <IconEye />
       <span>
-        <span className="font-semibold text-bone/70">
-          {count.toLocaleString("id-ID")}
-        </span>{" "}
-        pengunjung
+        <span>{count.toLocaleString("id-ID")}</span> pengunjung
       </span>
     </span>
   );
