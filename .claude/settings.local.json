@@ -14,7 +14,11 @@
       "PowerShell(Get-ChildItem -Path \"J:\\\\Project\\\\ssb-sampali-putra\\\\app\" -Recurse -Depth 3 | Select-Object FullName | ForEach-Object { $_.FullName -replace [regex]::Escape\\(\"J:\\\\Project\\\\ssb-sampali-putra\\\\\"\\), \"\" })",
       "PowerShell(npx tsc --noEmit 2>&1)",
       "PowerShell(try { Remove-Item -Recurse -Force .next -ErrorAction Stop; \"ok\" } catch { \"locked: $\\($_.Exception.Message\\)\" })",
-      "mcp__Sanity__query_documents"
+      "mcp__Sanity__query_documents",
+      "PowerShell($content = Get-Content .env.local -Raw; $lines = $content -split \"`n\"; $i = 0; foreach \\($l in $lines\\) { if \\($l -match \"SANITY\"\\) { Write-Output \"Line $i \\($\\($l.Length\\) chars\\): $l\" }; $i++ })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"https://ssbsampaliputra.com/api/visitor\" -Method POST -UseBasicParsing -TimeoutSec 15; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"POST: $\\($r.Content\\)\" } catch { Write-Output \"ERROR: $\\($_.Exception.Message\\)\"; if \\($_.Exception.Response\\) { $sr = New-Object System.IO.StreamReader $_.Exception.Response.GetResponseStream\\(\\); Write-Output \"BODY: $\\($sr.ReadToEnd\\(\\)\\)\" } })",
+      "Bash(dir J:\\\\Project\\\\ssb-sampali-putra)",
+      "Bash(npx tsc *)"
     ]
   }
 }

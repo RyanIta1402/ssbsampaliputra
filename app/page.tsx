@@ -9,6 +9,7 @@ import Hero from "@/components/Hero";
 import Marquee from "@/components/Marquee";
 import Motto from "@/components/Motto";
 import Navbar from "@/components/Navbar";
+import Pengumuman from "@/components/Pengumuman";
 import Pengurus from "@/components/Pengurus";
 import Programs from "@/components/Programs";
 import Testimonials from "@/components/Testimonials";
@@ -18,6 +19,7 @@ import {
   getCoaches,
   getGallery,
   getHero,
+  getPengumuman,
   getPrograms,
   getSiteSettings,
   getTestimonials,
@@ -44,6 +46,7 @@ export default async function Home() {
     gallery,
     achievements,
     testimonials,
+    pengumuman,
   ] = await Promise.all([
     safe(getSiteSettings),
     safe(getHero),
@@ -53,6 +56,7 @@ export default async function Home() {
     safe(getGallery),
     safe(getAchievements),
     safe(getTestimonials),
+    safe(getPengumuman),
   ]);
 
   const namaKlub =
@@ -63,6 +67,7 @@ export default async function Home() {
       <Navbar namaKlub={namaKlub} />
       <Hero data={hero} />
       <Marquee />
+      <Pengumuman data={pengumuman as never} />
       <About data={about} />
       <Motto />
       <Programs programs={programs as never} />

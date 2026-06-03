@@ -79,6 +79,24 @@ export const testimonialsQuery = groq`*[_type == "testimonial"] | order(urutan a
   foto
 }`;
 
+export const pengumumanQuery = groq`*[_type == "pengumuman" && isAktif == true] | order(urutan asc)[0]{
+  _id,
+  judul,
+  kategori,
+  deskripsiSingkat,
+  poster,
+  tanggal,
+  hari,
+  lokasi,
+  format,
+  persyaratan,
+  biayaPendaftaran,
+  hadiah[]{ juara, hadiah },
+  kontak,
+  teksTombolUtama,
+  linkTombol
+}`;
+
 // Helper fetch dengan revalidasi (ISR) setiap 60 detik
 const REVALIDATE = 60;
 
@@ -105,4 +123,7 @@ export async function getAchievements() {
 }
 export async function getTestimonials() {
   return client.fetch(testimonialsQuery, {}, { next: { revalidate: REVALIDATE } });
+}
+export async function getPengumuman() {
+  return client.fetch(pengumumanQuery, {}, { next: { revalidate: REVALIDATE } });
 }

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const links = [
+  { label: "Event", href: "#event" },
   { label: "Tentang", href: "#tentang" },
   { label: "Program", href: "#program" },
   { label: "Pelatih", href: "#pelatih" },
