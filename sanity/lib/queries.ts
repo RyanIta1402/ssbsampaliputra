@@ -79,7 +79,7 @@ export const testimonialsQuery = groq`*[_type == "testimonial"] | order(urutan a
   foto
 }`;
 
-export const pengumumanQuery = groq`*[_type == "pengumuman" && isAktif == true] | order(urutan asc)[0]{
+export const pengumumanQuery = groq`*[_type == "pengumuman" && isAktif == true] | order(urutan asc){
   _id,
   judul,
   kategori,

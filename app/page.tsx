@@ -67,7 +67,7 @@ export default async function Home() {
       <Navbar namaKlub={namaKlub} />
       <Hero data={hero} />
       <Marquee />
-      <Pengumuman data={pengumuman as never} />
+      <Pengumuman data={pengumuman as never[]} />
       <About data={about} />
       <Motto />
       <Programs programs={programs as never} />
