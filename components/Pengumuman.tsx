@@ -60,13 +60,6 @@ export default function Pengumuman({ data }: { data?: PengumumanData[] }) {
   const list = data && data.length > 0 ? data : fallbackList;
   const [active, setActive] = useState<PengumumanData | null>(null);
 
-  // Auto-scroll horizontal hanya bila lebih dari 1 event
-  const canLoop = list.length > 1;
-  const loopList = useMemo(
-    () => (canLoop ? [...list, ...list, ...list] : list),
-    [list, canLoop],
-  );
-
   const scrollRef = useRef<HTMLDivElement>(null);
   const posRef = useRef(0);
   const frameRef = useRef<number>();
@@ -75,6 +68,27 @@ export default function Pengumuman({ data }: { data?: PengumumanData[] }) {
   const dragStartXRef = useRef(0);
   const scrollStartRef = useRef(0);
   const didDragRef = useRef(false);
+
+  // Auto-scroll/loop hanya bila poster benar-benar melebihi lebar layar.
+  // Jika muat (mis. hanya 1-2 event), tampilkan apa adanya tanpa duplikat.
+  const [canLoop, setCanLoop] = useState(false);
+  const loopList = useMemo(
+    () => (canLoop ? [...list, ...list, ...list] : list),
+    [list, canLoop],
+  );
+
+  // Ukur apakah konten meluap; jalankan ulang saat jumlah event / ukuran berubah
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const measure = () => {
+      const singleWidth = el.scrollWidth / (canLoop ? 3 : 1);
+      setCanLoop(singleWidth > el.clientWidth + 8);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [list.length, canLoop]);
 
   useEffect(() => {
     const el = scrollRef.current;
