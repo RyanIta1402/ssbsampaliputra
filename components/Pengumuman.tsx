@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SanityImage from "./SanityImage";
 import Reveal from "./Reveal";
 
@@ -60,6 +60,88 @@ export default function Pengumuman({ data }: { data?: PengumumanData[] }) {
   const list = data && data.length > 0 ? data : fallbackList;
   const [active, setActive] = useState<PengumumanData | null>(null);
 
+  // Auto-scroll horizontal hanya bila lebih dari 1 event
+  const canLoop = list.length > 1;
+  const loopList = useMemo(
+    () => (canLoop ? [...list, ...list, ...list] : list),
+    [list, canLoop],
+  );
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const posRef = useRef(0);
+  const frameRef = useRef<number>();
+  const isPausedRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const scrollStartRef = useRef(0);
+  const didDragRef = useRef(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || !canLoop) return;
+
+    const third = () => el.scrollWidth / 3;
+    posRef.current = third();
+    el.scrollLeft = posRef.current;
+
+    const tick = () => {
+      if (!isPausedRef.current && !isDraggingRef.current) {
+        posRef.current += 0.5;
+        const t = third();
+        if (posRef.current >= t * 2) posRef.current -= t;
+        el.scrollLeft = posRef.current;
+      }
+      frameRef.current = requestAnimationFrame(tick);
+    };
+    frameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [canLoop, loopList]);
+
+  const onScroll = () => {
+    if (isDraggingRef.current || !canLoop) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    posRef.current = el.scrollLeft;
+    const t = el.scrollWidth / 3;
+    if (el.scrollLeft >= t * 2) {
+      posRef.current -= t;
+      el.scrollLeft = posRef.current;
+    }
+    if (el.scrollLeft < 0) {
+      posRef.current += t;
+      el.scrollLeft = posRef.current;
+    }
+  };
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartXRef.current = e.clientX;
+    scrollStartRef.current = scrollRef.current?.scrollLeft ?? 0;
+    posRef.current = scrollStartRef.current;
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDraggingRef.current || !scrollRef.current) return;
+    const delta = dragStartXRef.current - e.clientX;
+    if (Math.abs(delta) > 4) didDragRef.current = true;
+    const next = scrollStartRef.current + delta;
+    scrollRef.current.scrollLeft = next;
+    posRef.current = next;
+  };
+  const onMouseUp = () => {
+    isDraggingRef.current = false;
+  };
+  const onTouchStart = (e: React.TouchEvent) => {
+    didDragRef.current = false;
+    dragStartXRef.current = e.touches[0].clientX;
+  };
+  const onTouchMove = (e: React.TouchEvent) => {
+    const delta = dragStartXRef.current - e.touches[0].clientX;
+    if (Math.abs(delta) > 4) didDragRef.current = true;
+  };
+
   const close = useCallback(() => setActive(null), []);
 
   // Esc untuk tutup modal + lock body scroll
@@ -115,26 +197,57 @@ export default function Pengumuman({ data }: { data?: PengumumanData[] }) {
           </div>
         </Reveal>
 
-        {/* Grid Poster */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {list.map((ev, i) => (
-            <Reveal key={ev._id || i} delay={i * 80}>
+      </div>
+
+      {/* Strip Poster Horizontal */}
+      <div className="relative mt-2">
+        {/* Fade tepi */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ink to-transparent sm:w-24" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ink to-transparent sm:w-24" />
+
+        <div
+          ref={scrollRef}
+          onMouseEnter={() => {
+            isPausedRef.current = true;
+          }}
+          onMouseLeave={() => {
+            isPausedRef.current = false;
+            isDraggingRef.current = false;
+          }}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onScroll={onScroll}
+          className={`flex gap-5 overflow-x-auto px-5 py-4 select-none lg:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+            canLoop ? "cursor-grab active:cursor-grabbing" : "justify-center"
+          }`}
+          style={{ scrollBehavior: "auto" }}
+        >
+          {loopList.map((ev, i) => {
+            const handleOpen = () => {
+              if (!didDragRef.current) setActive(ev);
+            };
+            return (
               <button
-                onClick={() => setActive(ev)}
-                className="group relative w-full overflow-hidden rounded-3xl border border-bone/10 bg-coal text-left ring-1 ring-bone/10 transition-all duration-500 hover:ring-pitch/60 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_rgba(22,240,74,0.25)]"
+                key={`${ev._id || "ev"}-${i}`}
+                onMouseUp={handleOpen}
+                onTouchEnd={handleOpen}
+                className="group relative h-[26rem] w-72 shrink-0 overflow-hidden rounded-3xl border border-bone/10 bg-coal text-left ring-1 ring-bone/10 transition-all duration-300 hover:ring-pitch/60 hover:scale-[1.02] sm:w-80"
               >
                 {/* Animated conic glow border */}
                 <div className="pointer-events-none absolute -inset-px overflow-hidden rounded-3xl opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                   <div className="absolute -inset-1/2 animate-conic bg-[conic-gradient(from_0deg,transparent_0deg,#16f04a_60deg,transparent_140deg,#f5c542_220deg,transparent_300deg)] opacity-40" />
                 </div>
 
-                <div className="relative overflow-hidden rounded-[1.3rem]">
+                <div className="relative h-full overflow-hidden rounded-[1.3rem]">
                   <SanityImage
                     image={ev.poster}
                     alt={ev.judul || "Poster event"}
                     width={600}
                     height={800}
-                    className="aspect-[3/4] w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-105"
                     fallbackLabel="Poster Event"
                   />
 
@@ -171,9 +284,22 @@ export default function Pengumuman({ data }: { data?: PengumumanData[] }) {
                   </div>
                 </div>
               </button>
-            </Reveal>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Hint scroll */}
+        {canLoop && (
+          <div className="mt-4 flex items-center justify-center gap-3 text-bone/30">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            <span className="font-body text-[11px] uppercase tracking-widest">Geser untuk menjelajah event</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </div>
+        )}
       </div>
 
       {/* Modal Detail */}
