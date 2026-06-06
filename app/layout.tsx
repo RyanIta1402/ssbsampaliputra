@@ -19,12 +19,12 @@ const body = Archivo({
 const SITE_URL = "https://ssbsampaliputra.com";
 const SITE_NAME = "SSB Sampali Putra";
 const DESCRIPTION =
-  "SSB Sampali Putra — sekolah sepak bola pembinaan usia dini hingga remaja di Sampali, Deli Serdang. Pelatih berpengalaman, kurikulum modern, biaya terjangkau (mulai Rp 20.000/bulan).";
+  "SSB Sampali Putra — sekolah sepak bola (SSB) di Medan & Deli Serdang. Pembinaan sepak bola anak usia dini hingga remaja di Sampali. Pelatih berpengalaman, kurikulum modern, biaya terjangkau mulai Rp 20.000/bulan.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Sekolah Sepak Bola Sampali, Deli Serdang`,
+    default: `${SITE_NAME} | SSB Medan & Sekolah Sepak Bola Sampali, Deli Serdang`,
     template: `%s | ${SITE_NAME}`,
   },
   description: DESCRIPTION,
@@ -157,6 +157,12 @@ const jsonLd = {
     latitude: 3.63369,
     longitude: 98.715829,
   },
+  areaServed: [
+    { "@type": "City", name: "Medan" },
+    { "@type": "City", name: "Deli Serdang" },
+    { "@type": "AdministrativeArea", name: "Percut Sei Tuan" },
+    { "@type": "AdministrativeArea", name: "Sampali" },
+  ],
   telephone: "+62 859-4326-8952",
   sameAs: [
     "https://www.facebook.com/search/top?q=081375312900",

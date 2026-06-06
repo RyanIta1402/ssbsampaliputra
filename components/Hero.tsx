@@ -23,7 +23,7 @@ export default function Hero({ data }: { data?: HeroData }) {
   const baris2 = data?.judulBaris2 || "JUARA MASA DEPAN";
   const subjudul =
     data?.subjudul ||
-    "Sekolah Sepak Bola Sampali Putra membina anak usia dini hingga remaja dengan kurikulum modern, pelatih berpengalaman, dan fasilitas terbaik di Sampali, Deli Serdang.";
+    "SSB Sampali Putra adalah sekolah sepak bola di Medan, tepatnya di Sampali, Deli Serdang. Kami membina anak usia dini hingga remaja dengan kurikulum modern, pelatih berpengalaman, dan biaya terjangkau.";
   const stats =
     data?.statistik && data.statistik.length > 0
       ? data.statistik
@@ -51,7 +51,7 @@ export default function Hero({ data }: { data?: HeroData }) {
       <div className="relative mx-auto w-full max-w-7xl px-5 lg:px-8">
         <div className="max-w-3xl">
           <p className="tag-label mb-6 animate-fade-up">
-            Sekolah Sepak Bola • Sampali, Deli Serdang
+            SSB Medan • Sampali, Deli Serdang
           </p>
 
           <h1 className="font-display text-5xl uppercase leading-[1.1] tracking-tight text-bone sm:text-7xl sm:leading-[0.95] lg:text-8xl lg:leading-[0.9]">
