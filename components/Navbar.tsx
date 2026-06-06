@@ -10,6 +10,7 @@ const links = [
   { label: "Pelatih", href: "#pelatih" },
   { label: "Pengurus", href: "#pengurus" },
   { label: "Galeri", href: "#galeri" },
+  { label: "FAQ", href: "#faq" },
   { label: "Kontak", href: "#kontak" },
 ];
 

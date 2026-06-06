@@ -2,6 +2,7 @@ import About from "@/components/About";
 import Achievements from "@/components/Achievements";
 import Coaches from "@/components/Coaches";
 import Contact from "@/components/Contact";
+import FAQ from "@/components/FAQ";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import Footer from "@/components/Footer";
 import Gallery from "@/components/Gallery";
@@ -76,6 +77,7 @@ export default async function Home() {
       <Achievements achievements={achievements as never} />
       <Gallery items={gallery as never} />
       <Testimonials testimonials={testimonials as never} />
+      <FAQ />
       <Contact settings={settings} />
       <Footer settings={settings} />
       <FloatingWhatsApp

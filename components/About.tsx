@@ -40,7 +40,7 @@ export default function About({ data }: { data?: AboutData }) {
   const judul = data?.judul || "Tentang SSB Sampali Putra";
   const ringkasan =
     data?.ringkasan ||
-    "SSB Sampali Putra hadir sebagai wadah pembinaan sepak bola usia dini di kawasan Sampali, Deli Serdang. Kami percaya setiap anak punya potensi menjadi bintang. Tugas kami mengasahnya melalui latihan terarah, lingkungan positif, dan bimbingan penuh dedikasi.";
+    "SSB Sampali Putra adalah sekolah sepak bola anak usia dini di kawasan Sampali, Percut Sei Tuan, Deli Serdang, Sumatera Utara. Sebagai salah satu akademi sepak bola terdekat di Medan dan sekitarnya, kami membina anak SD hingga remaja (U-8, U-12, hingga U-15) dengan pelatih berpengalaman dan biaya iuran yang terjangkau. Kami percaya setiap anak punya potensi menjadi bintang — tugas kami mengasahnya melalui latihan terarah, lingkungan positif, dan bimbingan penuh dedikasi.";
   const tahun = data?.tahunBerdiri || "1995";
   const poin =
     data?.poinKeunggulan && data.poinKeunggulan.length > 0

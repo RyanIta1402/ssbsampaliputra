@@ -65,7 +65,7 @@ export default function Footer({ settings }: { settings?: Settings }) {
     },
     {
       label: "Facebook",
-      href: settings?.facebook || "https://www.facebook.com/081375312900",
+      href: settings?.facebook || "https://www.facebook.com/search/top?q=081375312900",
       icon: <IconFacebook />,
     },
     {

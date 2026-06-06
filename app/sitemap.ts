@@ -9,11 +9,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // memahami struktur halaman tunggal (single-page).
   const sections = [
     "",
+    "#event",
     "#tentang",
     "#program",
     "#pelatih",
     "#pengurus",
     "#galeri",
+    "#faq",
     "#kontak",
   ];
 

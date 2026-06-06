@@ -31,20 +31,46 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   generator: "Next.js",
   keywords: [
+    // Brand
     "SSB Sampali Putra",
+    "Sampali Putra",
+    "sekolah sepak bola Sampali Putra",
+    // Lokasi
     "sekolah sepak bola Sampali",
+    "SSB Sampali",
     "SSB Deli Serdang",
     "SSB Medan",
+    "SSB Percut Sei Tuan",
+    "SSB Sumatera Utara",
     "akademi sepak bola Medan",
     "akademi sepak bola Sampali",
+    "akademi sepak bola Deli Serdang",
+    "sekolah bola Medan",
+    "klub sepak bola anak Medan",
+    "sekolah sepak bola dekat saya",
+    "SSB terdekat",
+    // Target usia
     "sekolah sepak bola anak Medan",
-    "pendaftaran SSB",
     "SSB anak usia dini",
     "SSB U-8 U-12 U-15",
+    "SSB untuk anak SD",
+    "latihan bola anak Medan",
+    "pembinaan sepak bola usia dini",
+    // Niat / aksi
+    "pendaftaran SSB",
+    "daftar sekolah sepak bola Medan",
+    "biaya SSB Medan",
+    "iuran sekolah sepak bola murah",
+    "SSB biaya terjangkau",
+    "tempat latihan bola anak",
+    "ekstrakurikuler sepak bola Sumatera Utara",
+    // Lapangan / venue
     "Lapangan Garuda Deli Sampali",
     "Lapangan So Point",
-    "Sampali Putra",
-    "ekstrakurikuler sepak bola Sumatera Utara",
+    // Event / kompetisi
+    "turnamen sepak bola anak Medan",
+    "kompetisi sepak bola usia dini Medan",
+    "event sepak bola Sampali",
   ],
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
@@ -133,7 +159,7 @@ const jsonLd = {
   },
   telephone: "+62 859-4326-8952",
   sameAs: [
-    "https://www.facebook.com/081375312900",
+    "https://www.facebook.com/search/top?q=081375312900",
     "https://wa.me/6285943268952",
   ],
   openingHoursSpecification: [

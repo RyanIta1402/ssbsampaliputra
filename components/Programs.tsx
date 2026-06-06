@@ -66,8 +66,10 @@ export default function Programs({ programs }: { programs?: Program[] }) {
             Jenjang Latihan Sesuai Usia
           </h2>
           <p className="mt-5 text-base leading-relaxed text-bone/70">
-            Setiap kelompok usia memiliki kurikulum khusus agar perkembangan
-            pemain berjalan optimal dan menyenangkan.
+            Sekolah sepak bola Sampali Putra menyediakan program latihan untuk
+            anak usia dini hingga remaja dengan biaya iuran terjangkau mulai
+            Rp 20.000 per bulan. Setiap kelompok usia memiliki kurikulum khusus
+            agar perkembangan pemain berjalan optimal dan menyenangkan.
           </p>
         </Reveal>
 

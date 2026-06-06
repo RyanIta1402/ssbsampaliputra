@@ -172,9 +172,11 @@ export default function Contact({ settings }: { settings?: Settings }) {
               Siap Jadi Bagian <span className="text-pitch">Tim Kami?</span>
             </h2>
             <p className="mt-5 max-w-md text-base leading-relaxed text-bone/70">
-              Daftarkan putra Anda dan mulai perjalanan menjadi pesepak bola
-              hebat. Lengkapi formulir di samping, data akan terkirim ke
-              WhatsApp admin dan tim kami segera menghubungi Anda.
+              Mencari sekolah sepak bola terdekat di Sampali, Medan, dan Deli
+              Serdang? Daftarkan putra Anda di SSB Sampali Putra dan mulai
+              perjalanan menjadi pesepak bola hebat. Lengkapi formulir
+              pendaftaran di samping, data akan terkirim ke WhatsApp admin dan
+              tim kami segera menghubungi Anda.
             </p>
 
             {/* Unduh formulir kosong */}
