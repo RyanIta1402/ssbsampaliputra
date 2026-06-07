@@ -18,7 +18,15 @@
       "PowerShell($content = Get-Content .env.local -Raw; $lines = $content -split \"`n\"; $i = 0; foreach \\($l in $lines\\) { if \\($l -match \"SANITY\"\\) { Write-Output \"Line $i \\($\\($l.Length\\) chars\\): $l\" }; $i++ })",
       "PowerShell(try { $r = Invoke-WebRequest -Uri \"https://ssbsampaliputra.com/api/visitor\" -Method POST -UseBasicParsing -TimeoutSec 15; Write-Output \"STATUS: $\\($r.StatusCode\\)\"; Write-Output \"POST: $\\($r.Content\\)\" } catch { Write-Output \"ERROR: $\\($_.Exception.Message\\)\"; if \\($_.Exception.Response\\) { $sr = New-Object System.IO.StreamReader $_.Exception.Response.GetResponseStream\\(\\); Write-Output \"BODY: $\\($sr.ReadToEnd\\(\\)\\)\" } })",
       "Bash(dir J:\\\\Project\\\\ssb-sampali-putra)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s http://localhost:3000/)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(sed -n '10,20p')",
+      "Bash(git hash-object *)",
+      "Bash(nslookup sampaliputra.com)",
+      "Bash(nslookup ssbsampaliputra.com)",
+      "Bash(curl -sS -L --max-time 20 -o /dev/null -w \"final_url=%{url_effective} code=%{http_code}\\\\n\" https://sampaliputra.com)"
     ]
   }
 }
