@@ -93,28 +93,28 @@ export default function Programs({ programs }: { programs?: Program[] }) {
                   </p>
 
                   <div className="mt-6 flex flex-col gap-4 border-t border-bone/10 pt-6">
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                       <div className="font-body text-xs text-bone/60">
                         Jadwal
                       </div>
-                      <div className="font-semibold leading-tight text-bone text-right">
+                      <div className="font-semibold leading-tight text-bone sm:text-right">
                         {p.hariLatihan}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between gap-4">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                       <div className="font-body text-xs text-bone/60">
                         Iuran Orang Tua Siswa / bulan
                       </div>
-                      <div className="whitespace-nowrap font-display text-xl text-pitch transition-transform duration-300 group-hover:scale-110 origin-right">
+                      <div className="font-display text-xl text-pitch transition-transform duration-300 group-hover:scale-110 origin-left sm:origin-right">
                         {p.biaya}
                       </div>
                     </div>
                     {p.uangKas && (
-                      <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                         <div className="font-body text-xs text-bone/60">
                           Uang Kas Siswa / bulan
                         </div>
-                        <div className="whitespace-nowrap font-display text-xl text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 origin-right">
+                        <div className="font-display text-xl text-gold transition-transform duration-300 [transition-delay:60ms] group-hover:scale-110 origin-left sm:origin-right">
                           {p.uangKas}
                         </div>
                       </div>
