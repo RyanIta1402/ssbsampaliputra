@@ -21,6 +21,7 @@ const defaultCoaches: Coach[] = [
     jabatan: "Pelatih",
     lisensi: "",
     bio: "Berpengalaman lebih dari 12 tahun membina pemain muda di Sumatera Utara.",
+    fotoLocal: "/coaches/panji.jpeg",
   },
   {
     _id: "2",
