@@ -105,51 +105,43 @@ function ArrowIcon({ dir }: { dir: "left" | "right" }) {
   );
 }
 
-export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
-  const [filter, setFilter] = useState<string>("semua");
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
+function GalleryStrip({
+  items,
+  reverse = false,
+  onOpen,
+}: {
+  items: LocalMedia[];
+  reverse?: boolean;
+  onOpen: (index: number) => void;
+}) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const posRef = useRef(0);
   const frameRef = useRef<number>();
-  const isPausedRef = useRef(false);  // hover
+  const isPausedRef = useRef(false);
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const scrollStartRef = useRef(0);
-  const didDragRef = useRef(false);   // untuk bedain klik vs drag
+  const didDragRef = useRef(false);
 
-  const data = useMemo(() => {
-    if (filter === "semua") return localGallery;
-    return localGallery.filter((m) => m.kategori.toLowerCase() === filter);
-  }, [filter]);
+  const loopData = useMemo(() => [...items, ...items, ...items], [items]);
 
-  const kategoriList = useMemo(() => {
-    const set = new Set(localGallery.map((m) => m.kategori.toLowerCase()));
-    return ["semua", ...Array.from(set)];
-  }, []);
-
-  // Loop data — duplikat untuk seamless infinite scroll
-  const loopData = useMemo(() => [...data, ...data, ...data], [data]);
-
-  // Auto-scroll via rAF
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    // Reset posisi ke tengah (satu salinan)
     const resetPos = () => {
       const third = el.scrollWidth / 3;
-      posRef.current = third;
-      el.scrollLeft = third;
+      posRef.current = reverse ? third * 2 : third;
+      el.scrollLeft = posRef.current;
     };
     resetPos();
 
     const tick = () => {
       if (!isPausedRef.current && !isDraggingRef.current) {
-        posRef.current += 0.6;
+        posRef.current += reverse ? -0.6 : 0.6;
         const third = el.scrollWidth / 3;
-        // Setelah melewati satu salinan, loncat balik ke tengah (seamless)
-        if (posRef.current >= third * 2) posRef.current -= third;
+        if (!reverse && posRef.current >= third * 2) posRef.current -= third;
+        if (reverse && posRef.current <= third) posRef.current += third;
         el.scrollLeft = posRef.current;
       }
       frameRef.current = requestAnimationFrame(tick);
@@ -157,21 +149,18 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
 
     frameRef.current = requestAnimationFrame(tick);
     return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current); };
-  }, [data]);
+  }, [items, reverse]);
 
-  // Sync posRef saat scroll manual (touch/scrollbar)
   const onScroll = () => {
     if (isDraggingRef.current) return;
     const el = scrollRef.current;
     if (!el) return;
     posRef.current = el.scrollLeft;
-    // Seamless wrap saat scroll manual
     const third = el.scrollWidth / 3;
     if (el.scrollLeft >= third * 2) { posRef.current -= third; el.scrollLeft = posRef.current; }
-    if (el.scrollLeft < 0) { posRef.current += third; el.scrollLeft = posRef.current; }
+    if (el.scrollLeft < third * 0.5) { posRef.current += third; el.scrollLeft = posRef.current; }
   };
 
-  // Mouse drag
   const onMouseDown = (e: React.MouseEvent) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
@@ -191,29 +180,122 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
 
   const onMouseUp = () => { isDraggingRef.current = false; };
 
-  // Touch drag
   const onTouchStart = (e: React.TouchEvent) => {
     didDragRef.current = false;
     dragStartXRef.current = e.touches[0].clientX;
     scrollStartRef.current = scrollRef.current?.scrollLeft ?? 0;
   };
+
   const onTouchMove = (e: React.TouchEvent) => {
     if (!scrollRef.current) return;
     const delta = dragStartXRef.current - e.touches[0].clientX;
     if (Math.abs(delta) > 4) didDragRef.current = true;
   };
 
-  // Lightbox nav
-  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
-  const next = useCallback(() => setLightboxIndex((i) => i === null ? null : (i + 1) % data.length), [data.length]);
-  const prev = useCallback(() => setLightboxIndex((i) => i === null ? null : (i - 1 + data.length) % data.length), [data.length]);
+  return (
+    <div className="relative">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ink to-transparent sm:w-24" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ink to-transparent sm:w-24" />
+
+      <div
+        ref={scrollRef}
+        onMouseEnter={() => { isPausedRef.current = true; }}
+        onMouseLeave={() => { isPausedRef.current = false; isDraggingRef.current = false; }}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onScroll={onScroll}
+        className="flex gap-3 overflow-x-auto py-4 select-none cursor-grab active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollBehavior: "auto" }}
+      >
+        {loopData.map((m, i) => {
+          const realIndex = i % items.length;
+          return (
+            <button
+              key={`${m._id}-${i}`}
+              onMouseUp={() => { if (!didDragRef.current) onOpen(realIndex); }}
+              onTouchEnd={() => { if (!didDragRef.current) onOpen(realIndex); }}
+              className="group relative h-64 w-48 shrink-0 overflow-hidden rounded-2xl bg-coal ring-1 ring-bone/10 transition-all duration-300 hover:ring-pitch/60 hover:scale-[1.03] sm:h-72 sm:w-56"
+            >
+              {m.tipe === "video" ? (
+                <video
+                  src={m.src}
+                  poster={m.poster}
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  preload="metadata"
+                  className={`h-full w-full object-cover pointer-events-none${m.landscape ? " -rotate-90 scale-[1.334]" : ""}`}
+                />
+              ) : (
+                <Image
+                  src={m.src}
+                  alt={m.judul}
+                  width={400}
+                  height={600}
+                  draggable={false}
+                  className={`h-full w-full pointer-events-none ${m.fit === "contain" ? "object-contain" : "object-cover transition-transform duration-500 group-hover:scale-110"}`}
+                />
+              )}
+
+              {m.tipe === "video" && (
+                <span className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full bg-pitch/95 px-2 py-1 font-body text-[10px] font-bold uppercase tracking-widest text-ink">
+                  <PlayIcon /> Video
+                </span>
+              )}
+
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+              <div className="absolute inset-x-0 bottom-0 translate-y-2 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="font-body text-[9px] font-bold uppercase tracking-widest text-pitch">{m.kategori}</span>
+                <h3 className="mt-0.5 line-clamp-2 font-display text-xs uppercase leading-tight text-bone">{m.judul}</h3>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
+  const [filter, setFilter] = useState<string>("semua");
+  const [lightbox, setLightbox] = useState<{ data: LocalMedia[]; index: number } | null>(null);
+
+  const allPhotos = useMemo(() => localGallery.filter((m) => m.tipe === "gambar"), []);
+  const allVideos = useMemo(() => localGallery.filter((m) => m.tipe === "video"), []);
+
+  const photos = useMemo(
+    () => filter === "semua" ? allPhotos : allPhotos.filter((m) => m.kategori === filter),
+    [filter, allPhotos]
+  );
+  const videos = useMemo(
+    () => filter === "semua" ? allVideos : allVideos.filter((m) => m.kategori === filter),
+    [filter, allVideos]
+  );
+
+  const kategoriList = useMemo(() => {
+    const set = new Set(localGallery.map((m) => m.kategori.toLowerCase()));
+    return ["semua", ...Array.from(set)];
+  }, []);
+
+  const closeLightbox = useCallback(() => setLightbox(null), []);
+  const goNext = useCallback(() =>
+    setLightbox((lb) => lb ? { ...lb, index: (lb.index + 1) % lb.data.length } : null), []);
+  const goPrev = useCallback(() =>
+    setLightbox((lb) => lb ? { ...lb, index: (lb.index - 1 + lb.data.length) % lb.data.length } : null), []);
+
+  useEffect(() => { setLightbox(null); }, [filter]);
 
   useEffect(() => {
-    if (lightboxIndex === null) return;
+    if (!lightbox) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeLightbox();
-      else if (e.key === "ArrowRight") next();
-      else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") goNext();
+      else if (e.key === "ArrowLeft") goPrev();
     };
     document.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
@@ -222,14 +304,9 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [lightboxIndex, closeLightbox, next, prev]);
+  }, [lightbox, closeLightbox, goNext, goPrev]);
 
-  // Reset lightbox index saat filter berubah
-  useEffect(() => {
-    setLightboxIndex(null);
-  }, [filter]);
-
-  const aktif = lightboxIndex !== null ? data[lightboxIndex] : null;
+  const aktif = lightbox ? lightbox.data[lightbox.index] : null;
 
   return (
     <section id="galeri" className="relative bg-ink py-24 lg:py-32">
@@ -243,12 +320,12 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
               Momen di Lapangan
             </h2>
             <p className="mt-4 font-body text-base text-bone/60">
-              Geser untuk menjelajah atau klik gambar untuk melihat lebih besar.
+              Geser untuk menjelajah atau klik untuk melihat lebih besar.
             </p>
           </div>
           <div className="text-bone/40">
             <div className="font-display text-5xl leading-none text-pitch">
-              {data.length.toString().padStart(2, "0")}
+              {(photos.length + videos.length).toString().padStart(2, "0")}
             </div>
             <div className="mt-1 font-body text-xs uppercase tracking-widest">Media Ditampilkan</div>
           </div>
@@ -276,85 +353,38 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
         </Reveal>
       </div>
 
-      {/* Horizontal scroll strip — full width tanpa padding samping */}
-      <div className="relative">
-        {/* Fade edge kiri */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ink to-transparent sm:w-24" />
-        {/* Fade edge kanan */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ink to-transparent sm:w-24" />
-
-        <div
-          ref={scrollRef}
-          onMouseEnter={() => { isPausedRef.current = true; }}
-          onMouseLeave={() => { isPausedRef.current = false; isDraggingRef.current = false; }}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={onMouseUp}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onScroll={onScroll}
-          className="flex gap-3 overflow-x-auto py-4 select-none cursor-grab active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ scrollBehavior: "auto" }}
-        >
-          {loopData.map((m, i) => {
-            // Index sebenarnya dalam data asli (untuk lightbox)
-            const realIndex = i % data.length;
-            return (
-              <button
-                key={`${m._id}-${i}`}
-                onMouseUp={() => {
-                  if (!didDragRef.current) setLightboxIndex(realIndex);
-                }}
-                onTouchEnd={() => {
-                  if (!didDragRef.current) setLightboxIndex(realIndex);
-                }}
-                className="group relative h-64 w-48 shrink-0 overflow-hidden rounded-2xl bg-coal ring-1 ring-bone/10 transition-all duration-300 hover:ring-pitch/60 hover:scale-[1.03] sm:h-72 sm:w-56"
-              >
-                {m.tipe === "video" ? (
-                  <video
-                    src={m.src}
-                    poster={m.poster}
-                    muted
-                    loop
-                    playsInline
-                    autoPlay
-                    preload="metadata"
-                    className={`h-full w-full object-cover pointer-events-none${m.landscape ? " -rotate-90 scale-[1.334]" : ""}`}
-                  />
-                ) : (
-                  <Image
-                    src={m.src}
-                    alt={m.judul}
-                    width={400}
-                    height={600}
-                    draggable={false}
-                    className={`h-full w-full pointer-events-none ${m.fit === "contain" ? "object-contain" : "object-cover transition-transform duration-500 group-hover:scale-110"}`}
-                  />
-                )}
-
-                {/* Video badge */}
-                {m.tipe === "video" && (
-                  <span className="absolute left-2 top-2 z-10 inline-flex items-center gap-1 rounded-full bg-pitch/95 px-2 py-1 font-body text-[10px] font-bold uppercase tracking-widest text-ink">
-                    <PlayIcon /> Video
-                  </span>
-                )}
-
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-                {/* Caption */}
-                <div className="absolute inset-x-0 bottom-0 translate-y-2 p-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  <span className="font-body text-[9px] font-bold uppercase tracking-widest text-pitch">{m.kategori}</span>
-                  <h3 className="mt-0.5 line-clamp-2 font-display text-xs uppercase leading-tight text-bone">{m.judul}</h3>
-                </div>
-              </button>
-            );
-          })}
+      {/* Foto strip */}
+      <div className="mb-10">
+        <div className="mx-auto max-w-7xl px-5 lg:px-8 mb-3 flex items-center gap-3">
+          <span className="font-body text-xs font-bold uppercase tracking-widest text-pitch">Foto</span>
+          <span className="font-body text-xs text-bone/30">{photos.length} foto</span>
+          <div className="ml-auto flex items-center gap-2 text-bone/30">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3 w-3">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+            <span className="font-body text-[10px] uppercase tracking-widest">kanan</span>
+          </div>
         </div>
+        <GalleryStrip items={photos} onOpen={(i) => setLightbox({ data: photos, index: i })} />
       </div>
 
-      {/* Hint scroll */}
-      <Reveal className="mt-4 flex items-center justify-center gap-3 text-bone/30">
+      {/* Video strip */}
+      <div>
+        <div className="mx-auto max-w-7xl px-5 lg:px-8 mb-3 flex items-center gap-3">
+          <span className="font-body text-xs font-bold uppercase tracking-widest text-pitch">Video</span>
+          <span className="font-body text-xs text-bone/30">{videos.length} video</span>
+          <div className="ml-auto flex items-center gap-2 text-bone/30">
+            <span className="font-body text-[10px] uppercase tracking-widest">kiri</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3 w-3">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </div>
+        </div>
+        <GalleryStrip items={videos} reverse onOpen={(i) => setLightbox({ data: videos, index: i })} />
+      </div>
+
+      {/* Hint */}
+      <Reveal className="mt-6 flex items-center justify-center gap-3 text-bone/30">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
           <path d="m15 18-6-6 6-6" />
         </svg>
@@ -365,7 +395,7 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
       </Reveal>
 
       {/* Lightbox */}
-      {aktif && (
+      {aktif && lightbox && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/95 backdrop-blur-md"
           onClick={closeLightbox}
@@ -377,8 +407,8 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
             </div>
             <div className="flex items-center gap-3">
               <span className="font-body text-sm font-bold tracking-widest text-bone/60">
-                {(lightboxIndex! + 1).toString().padStart(2, "0")}
-                <span className="text-bone/30"> / {data.length.toString().padStart(2, "0")}</span>
+                {(lightbox.index + 1).toString().padStart(2, "0")}
+                <span className="text-bone/30"> / {lightbox.data.length.toString().padStart(2, "0")}</span>
               </span>
               <button
                 onClick={(e) => { e.stopPropagation(); closeLightbox(); }}
@@ -391,14 +421,14 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
           </div>
 
           <button
-            onClick={(e) => { e.stopPropagation(); prev(); }}
+            onClick={(e) => { e.stopPropagation(); goPrev(); }}
             aria-label="Sebelumnya"
             className="absolute left-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-bone/20 bg-ink/60 text-bone transition-all hover:border-pitch hover:bg-pitch hover:text-ink sm:left-6"
           >
             <ArrowIcon dir="left" />
           </button>
           <button
-            onClick={(e) => { e.stopPropagation(); next(); }}
+            onClick={(e) => { e.stopPropagation(); goNext(); }}
             aria-label="Berikutnya"
             className="absolute right-3 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-bone/20 bg-ink/60 text-bone transition-all hover:border-pitch hover:bg-pitch hover:text-ink sm:right-6"
           >

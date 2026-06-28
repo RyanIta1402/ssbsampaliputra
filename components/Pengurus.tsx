@@ -9,12 +9,12 @@ type Pengurus = {
 const susunan: Pengurus[] = [
   { jabatan: "Penasehat", nama: ["Hendrianto", "Ardy Syahputra", "Legimin"] },
   { jabatan: "Pembina", nama: ["Hari Syahputra", "Irwansyah"] },
-  { jabatan: "Ketua", nama: ["Riyanto"] },
+  // { jabatan: "Ketua", nama: ["Riyanto"] },
   { jabatan: "Wakil Ketua", nama: ["Khairul"] },
   { jabatan: "Sekretaris", nama: ["Dani"] },
   { jabatan: "Bendahara", nama: ["Susilawati"] },
   { jabatan: "Pelatih", nama: ["Panji", "Iqbal", "Ghalib"] },
-  { jabatan: "Admin", nama: ["Ita Novita", "Ella"] },
+  { jabatan: "Admin", nama: ["Ella"] },
   {
     jabatan: "Humas",
     nama: ["Frengki", "Reniramadani", "Hafis", "Gunawan"],

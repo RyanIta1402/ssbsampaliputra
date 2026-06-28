@@ -1,6 +1,7 @@
 import AnimatedCard from "./AnimatedCard";
 import Reveal from "./Reveal";
 import SanityImage from "./SanityImage";
+import VideoTestimonials from "./VideoTestimonials";
 
 type Testimonial = {
   _id?: string;
@@ -90,6 +91,8 @@ export default function Testimonials({
             </Reveal>
           ))}
         </div>
+
+        <VideoTestimonials />
       </div>
     </section>
   );
