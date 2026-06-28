@@ -20,6 +20,7 @@ type LocalMedia = {
   src: string;
   poster?: string;
   fit?: "cover" | "contain";
+  landscape?: boolean;
 };
 
 const localGallery: LocalMedia[] = [
@@ -57,6 +58,27 @@ const localGallery: LocalMedia[] = [
   { _id: "video-5", judul: "Aksi Pertandingan",        kategori: "pertandingan", tipe: "video",  src: "/gallery/video-5.mp4",  poster: "/gallery/foto-19.jpg" },
   { _id: "latihan-1", judul: "Sesi Latihan",           kategori: "latihan",      tipe: "video",  src: "/gallery/latihan-1.mp4", poster: "/gallery/foto-10.jpg", fit: "contain" },
   { _id: "latihan-2", judul: "Drill Latihan",          kategori: "latihan",      tipe: "video",  src: "/gallery/latihan-2.mp4", poster: "/gallery/foto-12.jpg", fit: "contain" },
+  // Foto & Video Pertandingan 25-06-2026
+  { _id: "foto-28",   judul: "Aksi Pertandingan",      kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-28.jpeg" },
+  { _id: "foto-29",   judul: "Momen Bertanding",       kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-29.jpeg" },
+  { _id: "foto-30",   judul: "Semangat di Lapangan",   kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-30.jpeg" },
+  { _id: "foto-31",   judul: "Duel Pemain",            kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-31.jpeg" },
+  { _id: "foto-32",   judul: "Pressing Ketat",         kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-32.jpeg" },
+  { _id: "ptg-v1",    judul: "Video Pertandingan 1",   kategori: "pertandingan", tipe: "video",  src: "/gallery/ptg-v1.mp4",  poster: "/gallery/foto-28.jpeg", landscape: true },
+  { _id: "foto-33",   judul: "Serangan Balik",         kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-33.jpeg" },
+  { _id: "foto-34",   judul: "Peluang Emas",           kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-34.jpeg" },
+  { _id: "foto-35",   judul: "Blok Pertahanan",        kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-35.jpeg" },
+  { _id: "ptg-v2",    judul: "Video Pertandingan 2",   kategori: "pertandingan", tipe: "video",  src: "/gallery/ptg-v2.mp4",  poster: "/gallery/foto-33.jpeg", landscape: true },
+  { _id: "foto-36",   judul: "Gol Spektakuler",        kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-36.jpeg" },
+  { _id: "foto-37",   judul: "Selebrasi Kemenangan",   kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-37.jpeg" },
+  { _id: "foto-38",   judul: "Kerjasama Tim",          kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-38.jpeg" },
+  { _id: "ptg-v3",    judul: "Video Pertandingan 3",   kategori: "pertandingan", tipe: "video",  src: "/gallery/ptg-v3.mp4",  poster: "/gallery/foto-36.jpeg", landscape: true },
+  { _id: "foto-39",   judul: "Strategi Matang",        kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-39.jpeg" },
+  { _id: "foto-40",   judul: "Pemanasan Pra Tanding",  kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-40.jpeg" },
+  { _id: "ptg-v4",    judul: "Video Pertandingan 4",   kategori: "pertandingan", tipe: "video",  src: "/gallery/ptg-v4.mp4",  poster: "/gallery/foto-40.jpeg" },
+  { _id: "foto-41",   judul: "Kepala Bertemu Bola",    kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-41.jpeg" },
+  { _id: "foto-42",   judul: "Momen Terakhir",         kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-42.jpeg" },
+  { _id: "ptg-v5",    judul: "Video Pertandingan 5",   kategori: "pertandingan", tipe: "video",  src: "/gallery/ptg-v5.mp4",  poster: "/gallery/foto-41.jpeg" },
 ];
 
 function PlayIcon() {
@@ -297,7 +319,7 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
                     playsInline
                     autoPlay
                     preload="metadata"
-                    className="h-full w-full object-cover pointer-events-none"
+                    className={`h-full w-full object-cover pointer-events-none${m.landscape ? " -rotate-90 scale-[1.334]" : ""}`}
                   />
                 ) : (
                   <Image
@@ -388,7 +410,7 @@ export default function Gallery({ items: _ }: { items?: GalleryItem[] }) {
             onClick={(e) => e.stopPropagation()}
           >
             {aktif.tipe === "video" ? (
-              <video key={aktif._id} src={aktif.src} poster={aktif.poster} controls autoPlay className="max-h-[85vh] w-auto rounded-lg" />
+              <video key={aktif._id} src={aktif.src} poster={aktif.poster} controls autoPlay className={`rounded-lg${aktif.landscape ? " -rotate-90 max-h-[60vw] w-auto" : " max-h-[85vh] w-auto"}`} />
             ) : (
               <Image key={aktif._id} src={aktif.src} alt={aktif.judul} width={1920} height={1280} className="max-h-[85vh] w-auto rounded-lg object-contain" priority />
             )}
