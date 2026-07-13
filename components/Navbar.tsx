@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const links = [
@@ -58,7 +59,13 @@ export default function Navbar({ namaKlub }: { namaKlub: string }) {
               </a>
             </li>
           ))}
-          <li className="ml-2">
+          <li className="ml-2 flex items-center gap-2 lg:gap-3">
+            <Link
+              href="/login"
+              className="btn-primary !px-4 !py-2 lg:!px-5 lg:!py-2.5"
+            >
+              Login
+            </Link>
             <a href="#kontak" className="btn-primary !px-4 !py-2 lg:!px-5 lg:!py-2.5">
               Daftar
             </a>
@@ -104,6 +111,15 @@ export default function Navbar({ namaKlub }: { namaKlub: string }) {
               </li>
             ))}
             <li className="pt-4">
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="btn-primary w-full"
+              >
+                Login
+              </Link>
+            </li>
+            <li className="pt-3">
               <a
                 href="#kontak"
                 onClick={() => setOpen(false)}

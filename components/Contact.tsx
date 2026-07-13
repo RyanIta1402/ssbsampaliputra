@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 
+import DateField from "@/components/DateField";
+import { isValidWa, normalizeWa } from "@/lib/wa";
+
 type Jadwal = {
   hari?: string;
   jam?: string;
@@ -60,6 +63,7 @@ type FormData = {
   tinggiBadan: string;
   golonganDarah: string;
   namaOrangTua: string;
+  foto: string; // data URL base64 hasil kompres (kosong bila tak diisi)
 };
 
 const initialForm: FormData = {
@@ -75,7 +79,50 @@ const initialForm: FormData = {
   tinggiBadan: "",
   golonganDarah: "",
   namaOrangTua: "",
+  foto: "",
 };
+
+/**
+ * Membaca file gambar, mengecilkan ke sisi maksimum `maxDim` px, lalu
+ * mengembalikannya sebagai data URL JPEG ter-kompres. Semua di sisi browser
+ * agar ukuran yang tersimpan ke database tetap kecil (± puluhan KB).
+ */
+async function compressImage(
+  file: File,
+  maxDim = 512,
+  quality = 0.7
+): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("gagal membaca file"));
+    reader.readAsDataURL(file);
+  });
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => resolve(im);
+    im.onerror = () => reject(new Error("gagal memuat gambar"));
+    im.src = dataUrl;
+  });
+
+  let { width, height } = img;
+  if (width > height && width > maxDim) {
+    height = Math.round((height * maxDim) / width);
+    width = maxDim;
+  } else if (height >= width && height > maxDim) {
+    width = Math.round((width * maxDim) / height);
+    height = maxDim;
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return dataUrl;
+  ctx.drawImage(img, 0, 0, width, height);
+  return canvas.toDataURL("image/jpeg", quality);
+}
 
 type Status = "idle" | "sending" | "saved" | "error";
 
@@ -88,6 +135,28 @@ const labelClass =
 export default function Contact({ settings }: { settings?: Settings }) {
   const [form, setForm] = useState<FormData>(initialForm);
   const [status, setStatus] = useState<Status>("idle");
+  const [fotoLoading, setFotoLoading] = useState(false);
+  const [fotoError, setFotoError] = useState("");
+
+  const onFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // reset agar bisa pilih file yang sama lagi
+    if (!file) return;
+    setFotoError("");
+    if (!file.type.startsWith("image/")) {
+      setFotoError("File harus berupa gambar.");
+      return;
+    }
+    setFotoLoading(true);
+    try {
+      const compressed = await compressImage(file);
+      setForm((prev) => ({ ...prev, foto: compressed }));
+    } catch {
+      setFotoError("Gagal memproses foto. Coba foto lain.");
+    } finally {
+      setFotoLoading(false);
+    }
+  };
 
   const wa = settings?.whatsapp || "6285943268952";
   const jadwal =
@@ -104,11 +173,11 @@ export default function Contact({ settings }: { settings?: Settings }) {
     ) =>
       setForm((prev) => ({ ...prev, [key]: e.target.value }));
 
-  // Wajib diisi sebelum tombol aktif
+  // Wajib diisi sebelum tombol aktif (No WhatsApp harus format valid)
   const valid =
     form.namaLengkap.trim() !== "" &&
     form.jenisKelamin.trim() !== "" &&
-    form.noHp.trim() !== "";
+    isValidWa(form.noHp);
 
   const openWhatsApp = () => {
     const ttl = [form.tempatLahir, form.tanggalLahir]
@@ -123,7 +192,7 @@ export default function Contact({ settings }: { settings?: Settings }) {
       `Nama Panggilan: ${form.namaPanggilan || "-"}`,
       `Jenis Kelamin: ${form.jenisKelamin}`,
       `Tempat, Tgl Lahir: ${ttl || "-"}`,
-      `No. Telepon/HP: ${form.noHp}`,
+      `No. WhatsApp: ${form.noHp}`,
       `Nama Sekolah: ${form.namaSekolah || "-"}`,
       `Kelas: ${form.kelas || "-"}`,
       "",
@@ -296,6 +365,43 @@ export default function Contact({ settings }: { settings?: Settings }) {
             </div>
             <div className="space-y-5">
               <div>
+                <label className={labelClass}>Foto Siswa</label>
+                {form.foto ? (
+                  <div className="flex items-center gap-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={form.foto}
+                      alt="Pratinjau foto siswa"
+                      className="h-24 w-24 rounded border border-bone/15 object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setForm((p) => ({ ...p, foto: "" }))}
+                      className="font-body text-xs font-bold uppercase tracking-widest text-pitch transition-colors hover:text-gold"
+                    >
+                      Hapus Foto
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex cursor-pointer items-center justify-center border border-dashed border-bone/20 bg-coal px-4 py-6 text-center text-sm text-bone/50 transition-colors hover:border-pitch">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={onFoto}
+                      className="hidden"
+                    />
+                    {fotoLoading
+                      ? "Memproses foto…"
+                      : "📷 Pilih / ambil foto siswa"}
+                  </label>
+                )}
+                {fotoError && (
+                  <p className="mt-1 text-xs font-semibold text-red-400">
+                    {fotoError}
+                  </p>
+                )}
+              </div>
+              <div>
                 <label className={labelClass}>
                   Nama Lengkap <span className="text-pitch">*</span>
                 </label>
@@ -345,22 +451,11 @@ export default function Contact({ settings }: { settings?: Settings }) {
                 </div>
                 <div>
                   <label className={labelClass}>Tanggal Lahir</label>
-                  <input
-                    type="text"
+                  <DateField
                     value={form.tanggalLahir}
-                    onChange={(e) => {
-                      const d = e.target.value.replace(/\D/g, "").slice(0, 8);
-                      let out = d;
-                      if (d.length > 4)
-                        out = `${d.slice(0, 2)}-${d.slice(2, 4)}-${d.slice(4)}`;
-                      else if (d.length > 2)
-                        out = `${d.slice(0, 2)}-${d.slice(2)}`;
-                      setForm((prev) => ({ ...prev, tanggalLahir: out }));
-                    }}
-                    placeholder="dd-mm-yyyy"
-                    inputMode="numeric"
-                    maxLength={10}
-                    pattern="\d{2}-\d{2}-\d{4}"
+                    onChange={(v) =>
+                      setForm((prev) => ({ ...prev, tanggalLahir: v }))
+                    }
                     className={fieldClass}
                   />
                 </div>
@@ -368,15 +463,38 @@ export default function Contact({ settings }: { settings?: Settings }) {
 
               <div>
                 <label className={labelClass}>
-                  Nomor Telepon / HP <span className="text-pitch">*</span>
+                  No WhatsApp <span className="text-pitch">*</span>
                 </label>
                 <input
                   type="tel"
+                  inputMode="numeric"
                   value={form.noHp}
                   onChange={setField("noHp")}
-                  placeholder="0812xxxxxxxx"
+                  placeholder="Contoh: 081234567890"
                   className={fieldClass}
                 />
+                {form.noHp.trim() !== "" && !isValidWa(form.noHp) ? (
+                  <p className="mt-1 text-xs font-semibold text-red-400">
+                    Masukkan nomor WhatsApp yang benar (mis. 081234567890).
+                  </p>
+                ) : (
+                  <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-bone/40">
+                    <span>
+                      Wajib nomor yang aktif di WhatsApp — admin akan
+                      menghubungi via WA.
+                    </span>
+                    {isValidWa(form.noHp) && (
+                      <a
+                        href={`https://wa.me/${normalizeWa(form.noHp)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-bold text-pitch underline-offset-2 hover:underline"
+                      >
+                        Cek di WhatsApp →
+                      </a>
+                    )}
+                  </p>
+                )}
               </div>
 
               <div className="grid gap-5 sm:grid-cols-2">

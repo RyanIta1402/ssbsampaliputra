@@ -18,9 +18,11 @@
     "sanity:dataset": "sanity dataset"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.1.0",
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^3.99.0",
+    "jose": "^6.2.3",
     "next": "^14.2.35",
     "next-sanity": "^9.12.3",
     "react": "^18.3.1",

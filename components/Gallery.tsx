@@ -79,6 +79,9 @@ const localGallery: LocalMedia[] = [
   { _id: "foto-41",   judul: "Kepala Bertemu Bola",    kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-41.jpeg" },
   { _id: "foto-42",   judul: "Momen Terakhir",         kategori: "pertandingan", tipe: "gambar", src: "/gallery/foto-42.jpeg" },
   { _id: "ptg-v5",    judul: "Video Pertandingan 5",   kategori: "pertandingan", tipe: "video",  src: "/gallery/ptg-v5.mp4",  poster: "/gallery/foto-41.jpeg" },
+  // Penghargaan
+  { _id: "foto-43",   judul: "Best Coach Liga Utamasia 2024", kategori: "prestasi",     tipe: "gambar", src: "/gallery/foto-43.jpeg", fit: "contain" },
+  { _id: "foto-44",   judul: "Piala Wali Siswa U-10 & U-12", kategori: "prestasi",     tipe: "gambar", src: "/gallery/foto-44.jpeg"},
 ];
 
 function PlayIcon() {

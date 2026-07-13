@@ -27,7 +27,8 @@
       "Bash(nslookup sampaliputra.com)",
       "Bash(nslookup ssbsampaliputra.com)",
       "Bash(curl -sS -L --max-time 20 -o /dev/null -w \"final_url=%{url_effective} code=%{http_code}\\\\n\" https://sampaliputra.com)",
-      "PowerShell(Get-ChildItem \"$env:TEMP\\\\claude\" | Sort-Object LastWriteTime -Descending | Select-Object -First 10 | Format-Table Name, LastWriteTime, Length)"
+      "PowerShell(Get-ChildItem \"$env:TEMP\\\\claude\" | Sort-Object LastWriteTime -Descending | Select-Object -First 10 | Format-Table Name, LastWriteTime, Length)",
+      "Bash(node -e ' *)"
     ]
   }
 }
