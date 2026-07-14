@@ -22,28 +22,32 @@ export default function AccountHeader({
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-4 lg:px-8">
         <Link
           href={role === "member" ? "/akun" : "/dashboard"}
-          className="flex items-center gap-3"
+          className="flex min-w-0 items-center gap-3"
         >
           <Image
             src="/logo.png"
             alt="Logo SSB Sampali Putra"
             width={40}
             height={40}
-            className="h-10 w-10 object-contain"
+            className="h-10 w-10 shrink-0 object-contain"
           />
-          <span className="flex flex-col leading-tight">
-            <span className="font-display text-lg uppercase tracking-wide text-bone">
+          <span className="flex min-w-0 flex-col leading-tight">
+            <span className="font-display text-sm uppercase tracking-tight text-bone md:text-lg md:tracking-wide">
               SSB Sampali Putra System
             </span>
             {userName ? (
-              <span className="font-body text-xs font-semibold text-pitch">
+              <span className="truncate font-body text-[11px] font-semibold text-pitch md:text-xs">
                 {userName}
               </span>
             ) : null}
           </span>
         </Link>
         <AccountMenu role={role} />
-        <LogoutButton />
+        {/* Di HP tombol keluar ada di dalam drawer AccountMenu; tampilkan yang
+            standalone hanya di desktop. */}
+        <div className="hidden md:block">
+          <LogoutButton />
+        </div>
       </div>
     </header>
   );
