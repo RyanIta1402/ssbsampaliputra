@@ -242,8 +242,16 @@ export default function DataGrid<T>({
         >
           <thead>
             <tr className="border-b border-bone/10 bg-coal/60 font-body text-xs font-bold uppercase tracking-widest text-bone/40">
+              {/* Judul kolom tak pernah dipatahkan: label yang terlipat dua baris
+                  membuat ikon sortir melompat & tinggi header tidak rata. Tabel
+                  sudah punya overflow-x-auto bila totalnya kepanjangan. */}
               {columns.map((col) => (
-                <th key={col.key} className={`px-4 py-3 ${col.headerClassName ?? ""}`}>
+                <th
+                  key={col.key}
+                  className={`whitespace-nowrap px-4 py-3 ${
+                    col.headerClassName ?? ""
+                  }`}
+                >
                   {col.sortValue ? (
                     <button
                       type="button"

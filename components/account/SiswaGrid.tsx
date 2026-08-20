@@ -12,7 +12,12 @@ import {
 } from "@/components/account/PesertaForm";
 import ReportButton, { type ReportColumn } from "@/components/account/ReportButton";
 import {
+  TagihanButton,
+  TagihanIuranModal,
+} from "@/components/account/TagihanIuran";
+import {
   ActionButtons,
+  actionIconClass,
   AddButton,
   CheckIcon,
   ConfirmDialog,
@@ -20,8 +25,9 @@ import {
   DetailButton,
   EditButton,
   formatDate,
+  WaButton,
 } from "@/components/account/ui";
-import { isoDateInput, tahunLahir } from "@/lib/date";
+import { bulanLabel, isoDateInput, tahunLahir } from "@/lib/date";
 import { SISWA_STATUSES } from "@/lib/peserta";
 import { normalizeWa } from "@/lib/wa";
 
@@ -87,11 +93,26 @@ const REPORT_COLUMNS: ReportColumn<PesertaRow>[] = [
   { header: "Status", value: (r) => STATUS_LABELS[r.status] ?? r.status },
 ];
 
-export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
+/**
+ * Baris dari view `v_siswa`.
+ *
+ * - `bulan_tagihan_terakhir` berasal dari view dan bersifat GLOBAL (bulan
+ *   tagihan terakhir yang ada di tabel spp, sama untuk semua siswa aktif),
+ *   jadi hanya untuk ditampilkan di kolom.
+ * - `spp_terakhir` dihitung per siswa dan dipakai surat pemberitahuan iuran.
+ */
+export type SiswaRow = PesertaRow & {
+  bulan_tagihan_terakhir?: string | Date | null;
+  spp_terakhir?: string | Date | null;
+};
+
+export default function SiswaGrid({ rows }: { rows: SiswaRow[] }) {
   const router = useRouter();
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<PesertaRow | null>(null);
   const [viewing, setViewing] = useState<PesertaRow | null>(null);
+  // Surat pemberitahuan iuran (PDF + pesan WA) untuk satu siswa.
+  const [tagihan, setTagihan] = useState<SiswaRow | null>(null);
   const [deleting, setDeleting] = useState<PesertaRow | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
@@ -168,7 +189,7 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
     }
   };
 
-  const columns: Column<PesertaRow>[] = [
+  const columns: Column<SiswaRow>[] = [
     {
       key: "nis",
       header: "NIS",
@@ -185,7 +206,9 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
         <div className="flex items-center gap-3">
           <FotoCell row={r} />
           <div>
-            <div className="font-semibold text-bone">{r.nama_lengkap}</div>
+            <div className="whitespace-nowrap font-semibold text-bone">
+              {r.nama_lengkap}
+            </div>
             <div className="text-xs text-bone/40">
               {[r.nama_panggilan, r.jenis_kelamin].filter(Boolean).join(" · ") ||
                 "—"}
@@ -202,7 +225,7 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
           href={`https://wa.me/${normalizeWa(r.no_hp)}`}
           target="_blank"
           rel="noreferrer"
-          className="transition-colors hover:text-pitch"
+          className="whitespace-nowrap transition-colors hover:text-pitch"
         >
           {r.no_hp}
         </a>
@@ -221,7 +244,9 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
       sortValue: (r) =>
         r.tanggal_lahir ? new Date(r.tanggal_lahir).getTime() : 0,
       render: (r) => (
-        <span className="text-bone/50">{formatDate(r.tanggal_lahir)}</span>
+        <span className="whitespace-nowrap text-bone/50">
+          {formatDate(r.tanggal_lahir)}
+        </span>
       ),
     },
     {
@@ -236,7 +261,25 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
       sortValue: (r) => (r.updated_at ? new Date(r.updated_at).getTime() : 0),
       render: (r) =>
         r.updated_at ? (
-          <span className="text-bone/50">{formatDate(r.updated_at)}</span>
+          <span className="whitespace-nowrap text-bone/50">
+            {formatDate(r.updated_at)}
+          </span>
+        ) : (
+          <span className="text-bone/25">—</span>
+        ),
+    },
+    {
+      key: "bulan_tagihan_terakhir",
+      header: "Last Tagihan",
+      sortValue: (r) =>
+        r.bulan_tagihan_terakhir
+          ? new Date(r.bulan_tagihan_terakhir).getTime()
+          : 0,
+      render: (r) =>
+        r.bulan_tagihan_terakhir ? (
+          <span className="whitespace-nowrap text-bone/50">
+            {bulanLabel(r.bulan_tagihan_terakhir)}
+          </span>
         ) : (
           <span className="text-bone/25">—</span>
         ),
@@ -246,7 +289,9 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
       header: "Aksi",
       headerClassName: "text-right",
       render: (r) => (
-        <ActionButtons>
+        <ActionButtons cols={3}>
+          <TagihanButton onClick={() => setTagihan(r)} />
+          <WaButton phone={r.no_hp} />
           <DetailButton onClick={() => setViewing(r)} />
           <button
             type="button"
@@ -256,7 +301,7 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
             }}
             title={r.status === "aktif" ? "Nonaktifkan" : "Aktifkan"}
             aria-label={r.status === "aktif" ? "Nonaktifkan" : "Aktifkan"}
-            className={`border p-1.5 transition-colors ${
+            className={`${actionIconClass} ${
               r.status === "aktif"
                 ? "border-gold/40 text-gold hover:bg-gold/10"
                 : "border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
@@ -276,7 +321,7 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
     },
   ];
 
-  const filters: SelectFilter<PesertaRow>[] = [
+  const filters: SelectFilter<SiswaRow>[] = [
     {
       key: "status",
       label: "Status",
@@ -327,7 +372,7 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
         searchPlaceholder="Cari NIS, nama, sekolah, no. HP..."
         filters={filters}
         emptyText="Belum ada data siswa."
-        minTableWidth="900px"
+        minTableWidth="1060px"
         selectable
         action={(filtered) => (
           <div className="flex items-center gap-2">
@@ -369,6 +414,9 @@ export default function SiswaGrid({ rows }: { rows: PesertaRow[] }) {
             router.refresh();
           }}
         />
+      )}
+      {tagihan && (
+        <TagihanIuranModal row={tagihan} onClose={() => setTagihan(null)} />
       )}
       {viewing && (
         <PesertaDetailModal

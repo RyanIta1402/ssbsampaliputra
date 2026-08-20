@@ -13,6 +13,7 @@ import {
 import ReportButton, { type ReportColumn } from "@/components/account/ReportButton";
 import {
   ActionButtons,
+  actionIconClass,
   AddButton,
   CheckIcon,
   ConfirmDialog,
@@ -215,7 +216,7 @@ export default function PendaftaranGrid({
                 }}
                 title="Terima"
                 aria-label="Terima"
-                className="border border-emerald-500/40 p-1.5 text-emerald-400 transition-colors hover:bg-emerald-500/10"
+                className={`${actionIconClass} border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10`}
               >
                 <CheckIcon />
               </button>

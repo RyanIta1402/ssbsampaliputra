@@ -12,6 +12,7 @@ import { type SiswaOption } from "@/components/account/SppGrid";
 import WhatsAppButton from "@/components/account/WhatsAppButton";
 import {
   ActionButtons,
+  actionIconClass,
   AddButton,
   CheckIcon,
   ConfirmDialog,
@@ -378,7 +379,7 @@ function StatusBayarToggle({
           ? "Sudah bayar — klik untuk tandai belum bayar"
           : "Belum bayar — klik untuk tandai sudah bayar"
       }
-      className={`border p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+      className={`${actionIconClass} disabled:cursor-not-allowed disabled:opacity-40 ${
         paid
           ? "border-pitch/50 bg-pitch/10 text-pitch hover:bg-pitch/20"
           : "border-bone/20 text-bone/40 hover:border-pitch hover:text-pitch"

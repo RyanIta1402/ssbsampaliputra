@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import AccountHeader from "@/components/account/AccountHeader";
-import type { PesertaRow } from "@/components/account/PesertaForm";
-import SiswaGrid from "@/components/account/SiswaGrid";
+import SiswaGrid, { type SiswaRow } from "@/components/account/SiswaGrid";
 import { canManage, getSession } from "@/lib/auth";
 import { getSql, isDbConfigured } from "@/lib/db";
 
@@ -17,19 +16,30 @@ export default async function SiswaPage() {
   if (!session) redirect("/login");
   if (!canManage(session.role)) redirect("/akun");
 
-  let rows: PesertaRow[] = [];
+  let rows: SiswaRow[] = [];
   let dbError = false;
   if (isDbConfigured) {
     try {
       const sql = getSql();
+      // Sumber data: view `v_siswa` (tabel siswa + kolom turunan).
+      //
+      // `bulan_tagihan_terakhir` datang dari view dan bersifat GLOBAL: nilainya
+      // bulan tagihan terakhir yang ada di tabel spp, sama untuk semua siswa
+      // aktif (null untuk siswa nonaktif). Jadi kolom itu HANYA untuk
+      // ditampilkan, bukan penanda pembayaran per siswa.
+      //
+      // `spp_terakhir` tetap dihitung terpisah karena harus PER SISWA — dipakai
+      // surat pemberitahuan iuran untuk menebak periode tunggakan.
       rows = (await sql`
-        select id, nis, nama_lengkap, nama_panggilan, jenis_kelamin, tempat_lahir,
-               tanggal_lahir, no_hp, nama_sekolah, kelas, berat_badan,
-               tinggi_badan, golongan_darah, nama_orang_tua, foto, status,
-               created_at, updated_at
-        from siswa
-        order by created_at desc
-      `) as PesertaRow[];
+        select v.id, v.nis, v.nama_lengkap, v.nama_panggilan, v.jenis_kelamin,
+               v.tempat_lahir, v.tanggal_lahir, v.no_hp, v.nama_sekolah, v.kelas,
+               v.berat_badan, v.tinggi_badan, v.golongan_darah, v.nama_orang_tua,
+               v.foto, v.status, v.created_at, v.updated_at,
+               v.bulan_tagihan_terakhir,
+               (select max(p.bulan) from spp p where p.siswa_id = v.id) as spp_terakhir
+        from v_siswa v
+        order by v.created_at desc
+      `) as SiswaRow[];
     } catch (err) {
       console.error("Gagal memuat siswa:", err);
       dbError = true;
