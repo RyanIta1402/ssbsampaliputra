@@ -24,16 +24,24 @@ import {
 import { isValidWa, normalizeWa } from "@/lib/wa";
 
 /**
- * Dialog surat pemberitahuan iuran per siswa: menyusun berkas PDF asli, mengunduhnya,
- * lalu membuka chat WhatsApp nomor siswa yang bersangkutan dengan teks terisi.
+ * Dialog surat pemberitahuan iuran per siswa: menyusun berkas PDF asli lalu
+ * membagikannya ke WhatsApp.
  *
- * KENAPA BUKAN LAMPIRAN OTOMATIS:
- * dua kemampuan ini saling meniadakan di web, dan kami memilih yang kedua —
+ * Dua kemampuan ini saling meniadakan di web, dan yang dipilih adalah LAMPIRAN
+ * OTOMATIS:
  *
  * - `navigator.share({ files })` BISA melampirkan PDF, tapi tidak punya kolom
- *   penerima sama sekali, sehingga admin harus memilih kontak tiap kali.
+ *   penerima sama sekali, sehingga kontak tujuan dipilih admin di menu berbagi.
  * - `wa.me/<nomor>` LANGSUNG membuka chat orang yang tepat, tapi tautannya
  *   tidak punya parameter lampiran.
+ *
+ * Karena itu alurnya menyesuaikan kemampuan perangkat:
+ *
+ * - HP (Android Chrome / iOS Safari) yang mendukung Web Share API Level 2 —
+ *   PDF dikirim sebagai lampiran lewat menu berbagi bawaan sistem; admin
+ *   memilih WhatsApp lalu kontak tujuan, berkas & teks sudah menempel.
+ * - Perangkat lain (umumnya desktop) — PDF diunduh, chat nomor siswa dibuka
+ *   lewat wa.me dengan teks terisi, dan admin melampirkan berkasnya manual.
  *
  * Hanya WhatsApp Cloud API resmi Meta yang bisa keduanya sekaligus (terlampir
  * DAN otomatis ke nomor tujuan), dan itu menuntut akun bisnis terverifikasi,
@@ -130,11 +138,12 @@ async function ambilLogo(): Promise<ArrayBuffer | undefined> {
  * berikutnya.
  *
  * Ini BUKAN sekadar optimasi kecepatan, melainkan syarat agar pengiriman
- * berhasil: `window.open()` hanya diizinkan selagi "transient user activation"
- * dari klik masih berlaku. Kalau bahan-bahan itu baru diunduh SETELAH tombol
- * ditekan, di HP dengan jaringan seluler jeda unduhannya bisa melewati batas
- * aktivasi sehingga tab wa.me diblokir pemblokir popup. Karena itu keduanya
- * dimuat lebih dulu saat dialog dibuka (lihat `useEffect` di bawah).
+ * berhasil: `navigator.share()` dan `window.open()` hanya diizinkan selagi
+ * "transient user activation" dari klik masih berlaku. Kalau bahan-bahan itu
+ * baru diunduh SETELAH tombol ditekan, di HP dengan jaringan seluler jeda
+ * unduhannya bisa melewati batas aktivasi — menu berbagi ditolak browser dan
+ * tab wa.me diblokir pemblokir popup. Karena itu keduanya dimuat lebih dulu
+ * saat dialog dibuka (lihat `useEffect` di bawah).
  */
 let modulPdf: Promise<typeof import("@/lib/suratIuranPdf")> | null = null;
 let logoTersimpan: Promise<ArrayBuffer | undefined> | null = null;
@@ -261,7 +270,25 @@ export function TagihanIuranModal({
       const file = await buatPdf(row, bulanList, nominal, catatan);
       const text = buildWaText(row, bulanList, nominal, catatan);
 
-      // PDF diunduh lebih dulu supaya sudah tersedia saat chat terbuka.
+      // Jalur utama: bagikan PDF sebagai LAMPIRAN lewat menu berbagi sistem.
+      // Menu itu tidak bisa diberi nomor tujuan, jadi kontaknya dipilih admin.
+      if (navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], text });
+          setInfo(
+            `Menu berbagi dibuka — pilih WhatsApp lalu kirim ke ${row.no_hp}.`
+          );
+          return;
+        } catch (err) {
+          // Pengguna menutup menu berbagi: itu pembatalan, bukan kegagalan.
+          // Jangan lanjut ke jalur cadangan agar tidak ada unduhan atau tab
+          // yang muncul tanpa diminta.
+          if (err instanceof DOMException && err.name === "AbortError") return;
+          console.error("Web Share gagal, memakai jalur cadangan:", err);
+        }
+      }
+
+      // Jalur cadangan (umumnya desktop): unduh PDF + buka chat nomor siswa.
       unduh(file);
       // Teks disalin juga karena sebagian WhatsApp Desktop merusak format saat
       // teks dioper lewat tautan.
@@ -275,7 +302,7 @@ export function TagihanIuranModal({
       );
       setInfo(
         tab
-          ? `Chat ${row.no_hp} dibuka dengan pesan terisi. PDF sudah diunduh — lampirkan lewat ikon klip (📎).`
+          ? `Perangkat ini belum mendukung lampiran otomatis. Chat ${row.no_hp} dibuka dan PDF sudah diunduh — lampirkan lewat ikon klip (📎).`
           : "PDF sudah diunduh, tapi tab WhatsApp diblokir browser. Izinkan popup untuk situs ini, atau buka WhatsApp manual — teks pesannya sudah disalin ke clipboard."
       );
     } catch (err) {
@@ -452,7 +479,7 @@ export function TagihanIuranModal({
           disabled={!waValid || sibuk !== ""}
           className="border border-pitch bg-pitch px-5 py-2.5 font-body text-xs font-bold uppercase tracking-widest text-ink transition-colors hover:bg-pitch/80 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {sibuk === "wa" ? "Menyiapkan..." : "Unduh PDF & Buka Chat"}
+          {sibuk === "wa" ? "Menyiapkan..." : "Kirim WhatsApp + PDF"}
         </button>
       </div>
     </Modal>
