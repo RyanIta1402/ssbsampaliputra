@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   actionIconClass,
@@ -24,18 +24,20 @@ import {
 import { isValidWa, normalizeWa } from "@/lib/wa";
 
 /**
- * Dialog surat pemberitahuan iuran per siswa: menyusun berkas PDF asli lalu
- * membagikannya ke WhatsApp.
+ * Dialog surat pemberitahuan iuran per siswa: menyusun berkas PDF asli, mengunduhnya,
+ * lalu membuka chat WhatsApp nomor siswa yang bersangkutan dengan teks terisi.
  *
- * Cara kirimnya menyesuaikan kemampuan perangkat:
+ * KENAPA BUKAN LAMPIRAN OTOMATIS:
+ * dua kemampuan ini saling meniadakan di web, dan kami memilih yang kedua —
  *
- * - HP (Android Chrome / iOS Safari) yang mendukung Web Share API Level 2 —
- *   PDF dikirim sebagai LAMPIRAN lewat menu berbagi bawaan sistem; admin
- *   tinggal memilih WhatsApp lalu kontak tujuan, berkas & teks sudah menempel.
- * - Perangkat lain (umumnya desktop) — PDF diunduh, lalu wa.me dibuka dengan
- *   teks terisi, dan admin melampirkan berkas itu manual. Tautan wa.me memang
- *   tidak punya parameter lampiran; hanya WhatsApp Cloud API resmi yang bisa
- *   mengirim dokumen sepenuhnya otomatis.
+ * - `navigator.share({ files })` BISA melampirkan PDF, tapi tidak punya kolom
+ *   penerima sama sekali, sehingga admin harus memilih kontak tiap kali.
+ * - `wa.me/<nomor>` LANGSUNG membuka chat orang yang tepat, tapi tautannya
+ *   tidak punya parameter lampiran.
+ *
+ * Hanya WhatsApp Cloud API resmi Meta yang bisa keduanya sekaligus (terlampir
+ * DAN otomatis ke nomor tujuan), dan itu menuntut akun bisnis terverifikasi,
+ * nomor khusus, template yang disetujui, serta biaya per pesan.
  */
 
 export type { TagihanSiswa };
@@ -123,24 +125,43 @@ async function ambilLogo(): Promise<ArrayBuffer | undefined> {
 }
 
 /**
- * Membuat berkas PDF surat. pdf-lib (~400 KB) sengaja di-import dinamis supaya
- * tidak ikut terbawa ke bundle awal halaman siswa — hanya dimuat saat tombol
- * ditekan.
+ * Bahan berat (modul pdf-lib ~400 KB + berkas logo) disimpan di tingkat modul
+ * supaya hanya diunduh sekali per sesi, lalu dipakai ulang untuk siswa
+ * berikutnya.
+ *
+ * Ini BUKAN sekadar optimasi kecepatan, melainkan syarat agar pengiriman
+ * berhasil: `window.open()` hanya diizinkan selagi "transient user activation"
+ * dari klik masih berlaku. Kalau bahan-bahan itu baru diunduh SETELAH tombol
+ * ditekan, di HP dengan jaringan seluler jeda unduhannya bisa melewati batas
+ * aktivasi sehingga tab wa.me diblokir pemblokir popup. Karena itu keduanya
+ * dimuat lebih dulu saat dialog dibuka (lihat `useEffect` di bawah).
  */
+let modulPdf: Promise<typeof import("@/lib/suratIuranPdf")> | null = null;
+let logoTersimpan: Promise<ArrayBuffer | undefined> | null = null;
+
+function muatBahan(): void {
+  modulPdf ??= import("@/lib/suratIuranPdf");
+  logoTersimpan ??= ambilLogo().then((buf) => {
+    // Gagal ambil (mis. jaringan sekejap putus) jangan dikunci selamanya —
+    // kosongkan cache agar percobaan berikutnya mengambil ulang.
+    if (!buf) logoTersimpan = null;
+    return buf;
+  });
+}
+
+/** Membuat berkas PDF surat dari bahan yang sudah dimuat lebih dulu. */
 async function buatPdf(
   row: TagihanSiswa,
   bulanList: string[],
   nominal: number,
   catatan: string
 ): Promise<File> {
-  const { buildSuratIuranPdf } = await import("@/lib/suratIuranPdf");
-  const bytes = await buildSuratIuranPdf(
-    row,
-    bulanList,
-    nominal,
-    catatan,
-    await ambilLogo()
-  );
+  muatBahan();
+  const [{ buildSuratIuranPdf }, logo] = await Promise.all([
+    modulPdf!,
+    logoTersimpan ?? Promise.resolve(undefined),
+  ]);
+  const bytes = await buildSuratIuranPdf(row, bulanList, nominal, catatan, logo);
   return new File([new Uint8Array(bytes)], namaFilePdf(row, bulanList), {
     type: "application/pdf",
   });
@@ -174,6 +195,12 @@ export function TagihanIuranModal({
   const [sibuk, setSibuk] = useState<"" | "pdf" | "wa">("");
   const [info, setInfo] = useState("");
   const [error, setError] = useState("");
+
+  // Unduh pdf-lib & logo sejak dialog dibuka, jauh sebelum tombol ditekan —
+  // lihat catatan pada muatBahan() soal transient user activation.
+  useEffect(() => {
+    muatBahan();
+  }, []);
 
   const nominal = Number(iuran.replace(/[^\d]/g, ""));
   const bulanList = bulanRange(dari, sampai);
@@ -234,26 +261,12 @@ export function TagihanIuranModal({
       const file = await buatPdf(row, bulanList, nominal, catatan);
       const text = buildWaText(row, bulanList, nominal, catatan);
 
-      // Jalur utama: bagikan PDF sebagai lampiran lewat menu berbagi sistem.
-      if (navigator.canShare?.({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file], text });
-          setInfo("Menu berbagi dibuka — pilih WhatsApp lalu kontak tujuan.");
-          return;
-        } catch (err) {
-          // Pengguna menutup menu berbagi: bukan kegagalan, jangan lanjut ke
-          // jalur cadangan agar tidak ada unduhan/tab yang tak diminta.
-          if (err instanceof DOMException && err.name === "AbortError") return;
-          console.error("Web Share gagal, memakai jalur cadangan:", err);
-        }
-      }
-
-      // Jalur cadangan (umumnya desktop): unduh PDF + buka wa.me berisi teks.
+      // PDF diunduh lebih dulu supaya sudah tersedia saat chat terbuka.
       unduh(file);
       // Teks disalin juga karena sebagian WhatsApp Desktop merusak format saat
       // teks dioper lewat tautan.
       navigator.clipboard?.writeText(text)?.catch(() => {});
-      window.open(
+      const tab = window.open(
         `https://wa.me/${normalizeWa(row.no_hp)}?text=${encodeURIComponent(
           text
         )}`,
@@ -261,7 +274,9 @@ export function TagihanIuranModal({
         "noopener,noreferrer"
       );
       setInfo(
-        "Perangkat ini belum mendukung lampiran otomatis. PDF sudah diunduh — lampirkan lewat ikon klip di WhatsApp."
+        tab
+          ? `Chat ${row.no_hp} dibuka dengan pesan terisi. PDF sudah diunduh — lampirkan lewat ikon klip (📎).`
+          : "PDF sudah diunduh, tapi tab WhatsApp diblokir browser. Izinkan popup untuk situs ini, atau buka WhatsApp manual — teks pesannya sudah disalin ke clipboard."
       );
     } catch (err) {
       console.error("Gagal menyiapkan kiriman WhatsApp:", err);
@@ -437,7 +452,7 @@ export function TagihanIuranModal({
           disabled={!waValid || sibuk !== ""}
           className="border border-pitch bg-pitch px-5 py-2.5 font-body text-xs font-bold uppercase tracking-widest text-ink transition-colors hover:bg-pitch/80 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {sibuk === "wa" ? "Menyiapkan..." : "Kirim WhatsApp + PDF"}
+          {sibuk === "wa" ? "Menyiapkan..." : "Unduh PDF & Buka Chat"}
         </button>
       </div>
     </Modal>
